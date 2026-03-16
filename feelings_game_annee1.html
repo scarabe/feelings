@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🐱 Feelings Game</title>
+<style>
+:root {
+  --pink:  #e0789f;
+  --blue:  #2a6dd9;
+  --green: #3cb86a;
+  --red:   #e04040;
+  --gold:  #f0a020;
+  --bg:    #fff8fc;
+  --card:  #ffffff;
+  --r:     16px;
+  --sh:    0 3px 12px rgba(0,0,0,0.10);
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+body {
+  font-family:"Comic Sans MS","Chalkboard SE",cursive;
+  background:var(--bg);
+  background-image:radial-gradient(circle,#f8c8dc 1px,transparent 1px);
+  background-size:18px 18px;
+  min-height:100vh;
+  padding:14px;
+  color:#333;
+}
+
+/* ── TOP BAR ── */
+.topbar {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:12px; flex-wrap:wrap; gap:8px;
+}
+.title {
+  font-size:clamp(17px,4vw,24px); font-weight:bold;
+  background:linear-gradient(135deg,#ff9ec4,#ffb347,#a8e6cf,#9ec4ff);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.score-box { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.pill {
+  background:white; border-radius:20px; padding:4px 12px;
+  font-size:13px; font-weight:bold; box-shadow:var(--sh);
+  border:2px solid #ffaac8;
+}
+.pill span { color:var(--pink); }
+
+/* ── LEVEL BADGES ── */
+.level-bar {
+  display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; align-items:center;
+}
+.lvl-badge {
+  padding:5px 16px; border-radius:20px; font-size:13px; font-weight:bold;
+  border:2.5px solid #ddd; color:#bbb; background:white;
+  transition:all 0.3s; position:relative; cursor:default;
+}
+.lvl-badge.active  { border-color:var(--gold); color:var(--gold); box-shadow:0 0 0 3px rgba(240,160,32,0.15); }
+.lvl-badge.done    { border-color:var(--green); color:white; background:var(--green); }
+.lvl-badge.locked  { opacity:0.45; }
+.lvl-badge .lock   { font-size:11px; margin-left:4px; }
+.threshold-note { font-size:11px; color:#aaa; font-style:italic; }
+
+/* ── MODE TABS ── */
+.mode-tabs {
+  display:flex; gap:8px; margin-bottom:12px;
+  background:white; padding:4px; border-radius:30px;
+  width:fit-content; box-shadow:var(--sh);
+}
+.tab {
+  padding:6px 16px; border-radius:24px; border:none;
+  font-family:inherit; font-size:13px; font-weight:bold;
+  cursor:pointer; transition:all 0.2s; color:#999; background:transparent;
+}
+.tab.active {
+  background:linear-gradient(135deg,#ff9ec4,#ffb880);
+  color:white; box-shadow:0 2px 8px rgba(224,120,159,0.4);
+}
+
+/* ── PROGRESS ── */
+.progress-bar {
+  height:7px; background:#f0d8e8; border-radius:8px;
+  margin-bottom:14px; overflow:hidden;
+}
+.progress-fill {
+  height:100%;
+  background:linear-gradient(90deg,#ff9ec4,#ffb347);
+  border-radius:8px; transition:width 0.4s ease;
+}
+
+/* ── QUESTION CARD ── */
+.q-card {
+  background:var(--card); border-radius:var(--r); padding:16px 18px;
+  box-shadow:var(--sh); margin-bottom:14px; text-align:center;
+  border:2px solid #ffe0ee;
+}
+.q-num { font-size:11px; color:#ccc; margin-bottom:4px; }
+.q-sentence { font-size:clamp(14px,3vw,19px); line-height:1.7; }
+.q-pro  { font-weight:bold; }
+.q-verb { color:var(--blue); font-weight:bold; }
+.q-blank {
+  display:inline-block; border-bottom:2.5px solid #aaa;
+  min-width:88px; margin:0 4px; vertical-align:middle;
+  padding-bottom:3px; line-height:1.4;
+}
+.q-blank.correct      { border-color:var(--green);  color:var(--green);  font-weight:bold; }
+.q-blank.also-correct { border-color:#f0a020;    color:#f0a020;    font-weight:bold; }
+.q-blank.wrong        { border-color:var(--red);   color:var(--red);   font-weight:bold; }
+.cat-btn.also-correct { border-color:#f0a020; background:#fffbe8; transform:scale(1.05); box-shadow:0 0 0 3px rgba(240,160,32,0.2); }
+.drag-chip.also-correct-chip { border-color:#f0a020 !important; }
+.q-context { color:#555; }
+
+/* ── MODE A: CAT GRID ── */
+.cat-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(72px,1fr));
+  gap:7px; margin-bottom:12px;
+}
+.cat-btn {
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  background:white; border:2.5px solid #eee; border-radius:14px;
+  padding:7px 3px 5px; cursor:pointer; transition:all 0.18s;
+  box-shadow:0 2px 6px rgba(0,0,0,0.06); font-family:inherit;
+}
+.cat-btn:hover:not(:disabled) {
+  transform:translateY(-3px) scale(1.04);
+  box-shadow:0 6px 16px rgba(224,120,159,0.25);
+  border-color:var(--pink);
+}
+.cat-btn:disabled { cursor:default; opacity:0.55; }
+.cat-btn svg { width:52px; height:52px; }
+.cat-btn .lbl { font-size:8.5px; text-transform:uppercase; font-weight:bold; color:#aaa; letter-spacing:0.3px; }
+.cat-btn.correct { border-color:var(--green); background:#efffef; transform:scale(1.08); box-shadow:0 0 0 3px rgba(60,184,106,0.2); }
+.cat-btn.wrong   { border-color:var(--red);   background:#fff0f0; animation:shake 0.3s ease; }
+@keyframes shake {
+  0%,100% { transform:translateX(0); }
+  25%      { transform:translateX(-5px); }
+  75%      { transform:translateX(5px); }
+}
+
+/* ── MODE B: CHIPS ── */
+.drag-zone {
+  display:flex; flex-wrap:wrap; gap:7px;
+  margin-bottom:12px; justify-content:center;
+}
+.drag-chip {
+  padding:6px 13px; background:white; border:2px solid #ffaac8;
+  border-radius:20px; font-family:inherit; font-size:13px; font-weight:bold;
+  color:#555; cursor:pointer; transition:all 0.15s;
+  box-shadow:0 2px 6px rgba(0,0,0,0.07);
+}
+.drag-chip:hover { background:#fff0f6; transform:scale(1.05); }
+.drag-chip.used  { opacity:0.25; pointer-events:none; }
+.drop-target {
+  display:inline-block; min-width:88px; height:26px;
+  border-bottom:2.5px dashed #ccc; margin:0 3px;
+  vertical-align:bottom; text-align:center; line-height:26px;
+  font-weight:bold; font-size:14px; transition:all 0.15s; cursor:pointer;
+}
+.drop-target.drag-over { border-color:var(--pink); background:#fff0f6; border-radius:6px; }
+.drop-target.correct      { border-color:var(--green); color:var(--green); border-style:solid; }
+.drop-target.also-correct { border-color:#f0a020;   color:#d08000;   border-style:solid; }
+.drop-target.wrong        { border-color:var(--red);   color:var(--red);   border-style:solid; }
+
+/* ── TOAST ── */
+.toast {
+  position:fixed; top:18px; left:50%;
+  transform:translateX(-50%) translateY(-80px);
+  background:white; border-radius:30px; padding:11px 26px;
+  font-size:17px; font-weight:bold; box-shadow:0 8px 30px rgba(0,0,0,0.15);
+  transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  z-index:999; border:3px solid #eee; pointer-events:none; white-space:nowrap;
+}
+.toast.show { transform:translateX(-50%) translateY(0); }
+.toast.ok   { border-color:var(--green); color:var(--green); }
+.toast.also { border-color:#f0a020;   color:#d08000; }
+.toast.bad  { border-color:var(--red);   color:var(--red);   }
+
+/* ── LEVEL RESULT SCREEN ── */
+.lvl-result {
+  display:none; text-align:center; background:white;
+  border-radius:var(--r); padding:28px 20px;
+  box-shadow:var(--sh); border:2px solid #ffe0ee;
+}
+.lvl-result.show { display:block; }
+.res-emoji { font-size:56px; margin-bottom:8px; }
+.res-stars { font-size:30px; letter-spacing:4px; margin-bottom:6px; }
+.res-title { font-size:22px; font-weight:bold; color:var(--pink); margin-bottom:6px; }
+.res-score { font-size:16px; color:#555; margin-bottom:18px; }
+.res-sub   { font-size:13px; color:#999; margin-bottom:18px; font-style:italic; }
+
+.btn-row { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+.btn {
+  border:none; border-radius:24px; padding:10px 26px;
+  font-family:inherit; font-size:14px; font-weight:bold;
+  cursor:pointer; transition:transform 0.15s;
+  box-shadow:0 3px 10px rgba(0,0,0,0.10);
+}
+.btn:hover { transform:scale(1.05); }
+.btn-retry  { background:linear-gradient(135deg,#ffb347,#ff9ec4); color:white; }
+.btn-next-lvl { background:linear-gradient(135deg,#a8e6cf,#9ec4ff); color:#333; }
+.btn-next-lvl:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
+
+/* ── NEXT BTN ── */
+.btn-next {
+  display:none; background:linear-gradient(135deg,#a8e6cf,#9ec4ff);
+  color:#333; border:none; border-radius:24px; padding:9px 26px;
+  font-family:inherit; font-size:14px; font-weight:bold;
+  cursor:pointer; box-shadow:0 3px 10px rgba(0,0,0,0.10);
+  margin:6px auto; transition:transform 0.15s;
+}
+.btn-next:hover { transform:scale(1.04); }
+.btn-next.visible { display:block; }
+
+/* ── FINAL TROPHY ── */
+.trophy-screen {
+  display:none; text-align:center; background:white;
+  border-radius:var(--r); padding:32px 20px;
+  box-shadow:var(--sh); border:3px solid var(--gold);
+}
+.trophy-screen.show { display:block; }
+.trophy-emoji { font-size:72px; margin-bottom:10px; }
+.trophy-title { font-size:26px; font-weight:bold; color:var(--gold); margin-bottom:8px; }
+.trophy-score { font-size:16px; color:#555; margin-bottom:20px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="title">🐱 Feelings Game</div>
+  <div class="score-box">
+    <div class="pill">✅ <span id="score-ok">0</span></div>
+    <div class="pill">❌ <span id="score-bad">0</span></div>
+    <div class="pill" id="pill-q">Q <span id="q-idx">1</span>/<span id="q-total">6</span></div>
+  </div>
+</div>
+
+<div class="level-bar">
+  <div class="lvl-badge active" id="badge-1">⭐ Level 1</div>
+  <div class="lvl-badge locked" id="badge-2">⭐⭐ Level 2 <span class="lock">🔒</span></div>
+  <div class="lvl-badge locked" id="badge-3">⭐⭐⭐ Level 3 <span class="lock">🔒</span></div>
+  <span class="threshold-note">80% needed to unlock next level</span>
+</div>
+
+<div class="mode-tabs">
+  <button class="tab active" id="tab-a" onclick="switchMode('a')">🐱 Find the cat</button>
+  <button class="tab"        id="tab-b" onclick="switchMode('b')">✏️ Fill the gap</button>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+
+<div class="q-card" id="q-card">
+  <div class="q-num" id="q-num">Question 1 / 6</div>
+  <div class="q-sentence" id="q-sentence"></div>
+</div>
+
+<div class="cat-grid" id="mode-a"></div>
+<div class="drag-zone" id="mode-b" style="display:none"></div>
+<button class="btn-next" id="btn-next" onclick="nextQuestion()">Next ➜</button>
+
+<!-- Level result -->
+<div class="lvl-result" id="lvl-result">
+  <div class="res-emoji"  id="res-emoji"></div>
+  <div class="res-stars"  id="res-stars"></div>
+  <div class="res-title"  id="res-title"></div>
+  <div class="res-score"  id="res-score"></div>
+  <div class="res-sub"    id="res-sub"></div>
+  <div class="btn-row">
+    <button class="btn btn-retry"   onclick="retryLevel()">Try again 🔄</button>
+    <button class="btn btn-next-lvl" id="btn-next-lvl" onclick="startNextLevel()">Next level ➜</button>
+  </div>
+</div>
+
+<!-- Trophy -->
+<div class="trophy-screen" id="trophy-screen">
+  <div class="trophy-emoji">🏆</div>
+  <div class="trophy-title">Amazing! All levels done!</div>
+  <div class="trophy-score" id="trophy-score"></div>
+  <div class="btn-row" style="margin-top:16px;">
+    <button class="btn btn-retry" onclick="fullRestart()">Play again from start 🔄</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CATS = {
+  "happy": `<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- body -->
+  <ellipse cx="30" cy="35" rx="21" ry="19" fill="#fff0f6" stroke="#e0789f" stroke-width="2"/>
+  <!-- ears -->
+  <polygon points="10,19 7,7 20,17" fill="#fff0f6" stroke="#e0789f" stroke-width="1.8"/>
+  <polygon points="50,19 53,7 40,17" fill="#fff0f6" stroke="#e0789f" stroke-width="1.8"/>
+  <!-- inner ears -->
+  <polygon points="11,18 9,10 18,17" fill="#ffcce0"/>
+  <polygon points="49,18 51,10 42,17" fill="#ffcce0"/>
+  <!-- happy U-eyes -->
+  <path d="M19,27 Q22,23 25,27" stroke="#333" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <path d="M35,27 Q38,23 41,27" stroke="#333" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <!-- blush -->
+  <ellipse cx="16" cy="34" rx="5" ry="3" fill="#ffaacc" opacity="0.5"/>
+  <ellipse cx="44" cy="34" rx="5" ry="3" fill="#ffaacc" opacity="0.5"/>
+  <!-- big smile -->
+  <path d="M20,40 Q30,50 40,40" stroke="#e0789f" stroke-width="2.2" fill="#ffcce0" stroke-linecap="round"/>
+  <!-- nose dot -->
+  <circle cx="30" cy="36" r="1.5" fill="#e0789f"/>
+  <!-- whiskers -->
+  <line x1="7" y1="34" x2="20" y2="36" stroke="#e0789f" stroke-width="1.2"/>
+  <line x1="7" y1="38" x2="20" y2="38" stroke="#e0789f" stroke-width="1.2"/>
+  <line x1="40" y1="36" x2="53" y2="34" stroke="#e0789f" stroke-width="1.2"/>
+  <line x1="40" y1="38" x2="53" y2="38" stroke="#e0789f" stroke-width="1.2"/>
+</svg>`,
+  "sad": `<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="30" cy="35" rx="21" ry="19" fill="#eef4ff" stroke="#7aaad8" stroke-width="2"/>
+  <polygon points="10,19 7,7 20,17" fill="#eef4ff" stroke="#7aaad8" stroke-width="1.8"/>
+  <polygon points="50,19 53,7 40,17" fill="#eef4ff" stroke="#7aaad8" stroke-width="1.8"/>
+  <polygon points="11,18 9,10 18,17" fill="#c8dcf5"/>
+  <polygon points="49,18 51,10 42,17" fill="#c8dcf5"/>
+  <!-- sad arched brows -->
+  <path d="M18,23 Q22,26 26,23" stroke="#555" stroke-width="1.8" fill="none"/>
+  <path d="M34,23 Q38,26 42,23" stroke="#555" stroke-width="1.8" fill="none"/>
+  <!-- teardrop eyes - downward curve -->
+  <path d="M19,30 Q22,27 25,30" stroke="#333" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <path d="M35,30 Q38,27 41,30" stroke="#333" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <!-- tears -->
+  <path d="M21,32 Q20,38 22,37" stroke="#88aaff" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <path d="M39,32 Q40,38 38,37" stroke="#88aaff" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <circle cx="21.5" cy="38" r="2" fill="#88aaff" opacity="0.7"/>
+  <circle cx="38.5" cy="38" r="2" fill="#88aaff" opacity="0.7"/>
+  <!-- frown -->
+  <path d="M22,45 Q30,40 38,45" stroke="#7aaad8" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <circle cx="30" cy="37" r="1.5" fill="#7aaad8"/>
+  <line x1="7" y1="34" x2="20" y2="35" stroke="#7aaad8" stroke-width="1.2"/>
+  <line x1="40" y1="35" x2="53" y2="34" stroke="#7aaad8" stroke-width="1.2"/>
+</svg>`,
+  "angry": `<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="30" cy="35" rx="21" ry="19" fill="#fff0ee" stroke="#e07060" stroke-width="2"/>
+  <polygon points="10,19 7,7 20,17" fill="#fff0ee" stroke="#e07060" stroke-width="1.8"/>
+  <polygon points="50,19 53,7 40,17" fill="#fff0ee" stroke="#e07060" stroke-width="1.8"/>
+  <polygon points="11,18 9,10 18,17" fill="#ffc8be"/>
+  <polygon points="49,18 51,10 42,17" fill="#ffc8be"/>
+  <!-- angry sharp brows — inward V -->
+  <line x1="16" y1="23" x2="26" y2="28" stroke="#c0392b" stroke-width="2.5"/>
+  <line x1="34" y1="28" x2="44" y2="23" stroke="#c0392b" stroke-width="2.5"/>
+  <!-- squinting angry eyes -->
+  <path d="M18,32 Q22,29 26,32" stroke="#333" stroke-width="2.2" fill="none"/>
+  <line x1="18" y1="32" x2="26" y2="32" stroke="#333" stroke-width="1.5"/>
+  <path d="M34,32 Q38,29 42,32" stroke="#333" stroke-width="2.2" fill="none"/>
+  <line x1="34" y1="32" x2="42" y2="32" stroke="#333" stroke-width="1.5"/>
+  <!-- steam puffs -->
+  <path d="M8,8 Q10,4 12,8 Q14,12 16,8" stroke="#e07060" stroke-width="1.5" fill="none"/>
+  <path d="M44,8 Q46,4 48,8 Q50,12 52,8" stroke="#e07060" stroke-width="1.5" fill="none"/>
+  <!-- gritted mouth -->
+  <path d="M22,45 Q30,42 38,45" stroke="#e07060" stroke-width="2" fill="none"/>
+  <line x1="25" y1="45" x2="25" y2="43" stroke="#e07060" stroke-width="1.2"/>
+  <line x1="30" y1="44.5" x2="30" y2="42.5" stroke="#e07060" stroke-width="1.2"/>
+  <line x1="35" y1="45" x2="35" y2="43" stroke="#e07060" stroke-width="1.2"/>
+  <circle cx="30" cy="38" r="1.5" fill="#e07060"/>
+  <line x1="7" y1="36" x2="20" y2="36" stroke="#e07060" stroke-width="1.2"/>
+  <line x1="40" y1="36" x2="53" y2="36" stroke="#e07060" stroke-width="1.2"/>
+</svg>`,
+  "scared": `<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="30" cy="35" rx="21" ry="19" fill="#f8f0ff" stroke="#a07ad8" stroke-width="2"/>
+  <!-- spiky scared ears -->
+  <polygon points="10,18 4,3 21,16" fill="#f8f0ff" stroke="#a07ad8" stroke-width="1.8"/>
+  <polygon points="50,18 56,3 39,16" fill="#f8f0ff" stroke="#a07ad8" stroke-width="1.8"/>
+  <polygon points="10,17 6,7 18,16" fill="#ddc8f5"/>
+  <polygon points="50,17 54,7 42,16" fill="#ddc8f5"/>
+  <!-- wide circle eyes with tiny pupils -->
+  <circle cx="22" cy="29" r="5.5" fill="white" stroke="#333" stroke-width="2"/>
+  <circle cx="22" cy="30" r="2.5" fill="#333"/>
+  <circle cx="23.5" cy="28" r="1" fill="white"/>
+  <circle cx="38" cy="29" r="5.5" fill="white" stroke="#333" stroke-width="2"/>
+  <circle cx="38" cy="30" r="2.5" fill="#333"/>
+  <circle cx="39.5" cy="28" r="1" fill="white"/>
+  <!-- open O mouth -->
+  <ellipse cx="30" cy="44" rx="5" ry="5.5" fill="white" stroke="#a07ad8" stroke-width="2"/>
+  <ellipse cx="30" cy="44" rx="3" ry="3" fill="#c8a0d8" opacity="0.6"/>
+  <line x1="7" y1="35" x2="18" y2="35" stroke="#a07ad8" stroke-width="1.2"/>
+  <line x1="42" y1="35" x2="53" y2="35" stroke="#a07ad8" stroke-width="1.2"/>
+  <circle cx="30" cy="37" r="1.5" fill="#a07ad8"/>
+</svg>`,
+  "tired": `<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="30" cy="35" rx="21" ry="19" fill="#f5f5ee" stroke="#b0a87a" stroke-width="2"/>
+  <polygon points="10,19 7,7 20,17" fill="#f5f5ee" stroke="#b0a87a" stroke-width="1.8"/>
+  <polygon points="50,19 53,7 40,17" fill="#f5f5ee" stroke="#b0a87a" stroke-width="1.8"/>
+  <polygon points="11,18 9,10 18,17" fill="#e0d8a0"/>
+  <polygon points="49,18 51,10 42,17" fill="#e0d8a0"/>
+  <!-- droopy half-closed eyes -->
+  <path d="M17,28 Q22,26 27,28" stroke="#333" stroke-width="2.2" fill="#e8e4c0" stroke-linecap="round"/>
+  <line x1="17" y1="28" x2="27" y2="28" stroke="#333" stroke-width="2.2"/>
+  <path d="M33,28 Q38,26 43,28" stroke="#333" stroke-width="2.2" fill="#e8e4c0" stroke-linecap="round"/>
+  <line x1="33" y1="28" x2="43" y2="28" stroke="#333" stroke-width="2.2"/>
+  <!-- ZZZ -->
+  <text x="38" y="14" font-size="7" fill="#b0a87a" font-weight="bold" font-family="serif">z</text>
+  <text x="41" y="10" font-size="8.5" fill="#b0a87a" font-weight="bold" font-family="serif">z</text>
+  <text x="45" y="6" font-size="10" fill="#b0a87a" font-weight="bold" font-family="serif">Z</text>
+  <!-- small flat mouth -->
+  <path d="M24,42 Q30,45 36,42" stroke="#b0a87a" stroke-width="1.8" fill="none"/>
+  <circle cx="30" cy="38" r="1.5" fill="#b0a87a"/>
+  <line x1="7" y1="34" x2="20" y2="35" stroke="#b0a87a" stroke-width="1.2"/>
+  <line x1="40" y1="35" x2="53" y2="34" stroke="#b0a87a" stroke-width="1.2"/>
+</svg>`,
+  "excited": `<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="30" cy="35" rx="21" ry="19" fill="#fffaee" stroke="#f0a020" stroke-width="2"/>
+  <polygon points="10,19 7,7 20,17" fill="#fffaee" stroke="#f0a020" stroke-width="1.8"/>
+  <polygon points="50,19 53,7 40,17" fill="#fffaee" stroke="#f0a020" stroke-width="1.8"/>
+  <polygon points="11,18 9,10 18,17" fill="#ffe8a0"/>
+  <polygon points="49,18 51,10 42,17" fill="#ffe8a0"/>
+  <!-- star-sparkle eyes -->
+  <circle cx="22" cy="28" r="5" fill="white" stroke="#333" stroke-width="1.8"/>
+  <text x="18.5" y="31.5" font-size="7" fill="#f0a020" font-weight="bold">✦</text>
+  <circle cx="38" cy="28" r="5" fill="white" stroke="#333" stroke-width="1.8"/>
+  <text x="34.5" y="31.5" font-size="7" fill="#f0a020" font-weight="bold">✦</text>
+  <!-- blush -->
+  <ellipse cx="15" cy="35" rx="5" ry="3" fill="#ffcc80" opacity="0.6"/>
+  <ellipse cx="45" cy="35" rx="5" ry="3" fill="#ffcc80" opacity="0.6"/>
+  <!-- huge open smile -->
+  <path d="M19,40 Q30,53 41,40" stroke="#f0a020" stroke-width="2.2" fill="#ffe0a0" stroke-linecap="round"/>
+  <circle cx="30" cy="37" r="1.5" fill="#f0a020"/>
+  <!-- ! marks -->
+  <text x="1" y="11" font-size="11" fill="#f0a020" font-weight="bold">!</text>
+  <text x="54" y="11" font-size="11" fill="#f0a020" font-weight="bold">!</text>
+  <line x1="7" y1="33" x2="19" y2="34" stroke="#f0a020" stroke-width="1.2"/>
+  <line x1="41" y1="34" x2="53" y2="33" stroke="#f0a020" stroke-width="1.2"/>
+</svg>`,
+  "bored": `<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="30" cy="35" rx="21" ry="19" fill="#f4f4f4" stroke="#999" stroke-width="2"/>
+  <polygon points="10,19 7,7 20,17" fill="#f4f4f4" stroke="#999" stroke-width="1.8"/>
+  <polygon points="50,19 53,7 40,17" fill="#f4f4f4" stroke="#999" stroke-width="1.8"/>
+  <polygon points="11,18 9,10 18,17" fill="#ddd"/>
+  <polygon points="49,18 51,10 42,17" fill="#ddd"/>
+  <!-- flat deadpan lines for eyes -->
+  <line x1="17" y1="29" x2="27" y2="29" stroke="#555" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="33" y1="29" x2="43" y2="29" stroke="#555" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- flat line mouth -->
+  <line x1="23" y1="42" x2="37" y2="42" stroke="#999" stroke-width="2" stroke-linecap="round"/>
+  <!-- head resting on hand implication: tilted head line -->
+  <path d="M8,40 Q6,50 12,52" stroke="#ccc" stroke-width="1.5" fill="none"/>
+  <circle cx="30" cy="37" r="1.5" fill="#999"/>
+  <line x1="7" y1="34" x2="20" y2="35" stroke="#999" stroke-width="1.2"/>
+  <line x1="40" y1="35" x2="53" y2="34" stroke="#999" stroke-width="1.2"/>
+  <!-- bored dots above -->
+  <circle cx="24" cy="6" r="1.2" fill="#ccc"/>
+  <circle cx="30" cy="4" r="1.2" fill="#ccc"/>
+  <circle cx="36" cy="6" r="1.2" fill="#ccc"/>
+</svg>`,
+  "surprised": `<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="30" cy="35" rx="21" ry="19" fill="#edfff5" stroke="#50c878" stroke-width="2"/>
+  <!-- raised pointy ears -->
+  <polygon points="10,17 6,2 22,15" fill="#edfff5" stroke="#50c878" stroke-width="1.8"/>
+  <polygon points="50,17 54,2 38,15" fill="#edfff5" stroke="#50c878" stroke-width="1.8"/>
+  <polygon points="11,16 8,5 19,15" fill="#b8f0d0"/>
+  <polygon points="49,16 52,5 41,15" fill="#b8f0d0"/>
+  <!-- raised arched brows -->
+  <path d="M17,21 Q22,17 27,21" stroke="#333" stroke-width="1.8" fill="none"/>
+  <path d="M33,21 Q38,17 43,21" stroke="#333" stroke-width="1.8" fill="none"/>
+  <!-- huge O eyes -->
+  <circle cx="22" cy="29" r="5.5" fill="white" stroke="#333" stroke-width="2"/>
+  <circle cx="22" cy="29" r="3" fill="#333"/>
+  <circle cx="23.5" cy="27.5" r="1.2" fill="white"/>
+  <circle cx="38" cy="29" r="5.5" fill="white" stroke="#333" stroke-width="2"/>
+  <circle cx="38" cy="29" r="3" fill="#333"/>
+  <circle cx="39.5" cy="27.5" r="1.2" fill="white"/>
+  <!-- tiny O mouth -->
+  <circle cx="30" cy="44" r="4" fill="white" stroke="#50c878" stroke-width="2"/>
+  <!-- sparkles -->
+  <text x="1" y="9" font-size="9" fill="#50c878">✦</text>
+  <text x="51" y="9" font-size="9" fill="#50c878">✦</text>
+  <line x1="7" y1="34" x2="18" y2="35" stroke="#50c878" stroke-width="1.2"/>
+  <line x1="42" y1="35" x2="53" y2="34" stroke="#50c878" stroke-width="1.2"/>
+</svg>`,
+  "lonely": `<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="30" cy="35" rx="21" ry="19" fill="#f0f2f8" stroke="#8890b8" stroke-width="2"/>
+  <polygon points="10,19 7,7 20,17" fill="#f0f2f8" stroke="#8890b8" stroke-width="1.8"/>
+  <polygon points="50,19 53,7 40,17" fill="#f0f2f8" stroke="#8890b8" stroke-width="1.8"/>
+  <polygon points="11,18 9,10 18,17" fill="#c8cce8"/>
+  <polygon points="49,18 51,10 42,17" fill="#c8cce8"/>
+  <!-- downturned brows -->
+  <path d="M18,24 Q22,27 26,24" stroke="#666" stroke-width="1.8" fill="none"/>
+  <path d="M34,24 Q38,27 42,24" stroke="#666" stroke-width="1.8" fill="none"/>
+  <!-- watery eyes -->
+  <circle cx="22" cy="30" r="4.5" fill="white" stroke="#333" stroke-width="1.8"/>
+  <circle cx="22" cy="31" r="2.2" fill="#5560a0"/>
+  <circle cx="21" cy="29" r="1" fill="white"/>
+  <!-- extra water in eyes -->
+  <path d="M18,32 Q20,36 22,34" stroke="#88aaff" stroke-width="1.5" fill="none"/>
+  <circle cx="38" cy="30" r="4.5" fill="white" stroke="#333" stroke-width="1.8"/>
+  <circle cx="38" cy="31" r="2.2" fill="#5560a0"/>
+  <circle cx="37" cy="29" r="1" fill="white"/>
+  <path d="M34,32 Q36,36 38,34" stroke="#88aaff" stroke-width="1.5" fill="none"/>
+  <!-- little frown -->
+  <path d="M23,45 Q30,41 37,45" stroke="#8890b8" stroke-width="2" fill="none"/>
+  <circle cx="30" cy="38" r="1.5" fill="#8890b8"/>
+  <!-- floating heart (broken/empty) -->
+  <path d="M28,9 Q30,6 32,9 Q35,5 33,12 Q30,15 27,12 Q25,9 28,9" fill="none" stroke="#8890b8" stroke-width="1.5"/>
+  <line x1="7" y1="34" x2="20" y2="35" stroke="#8890b8" stroke-width="1.2"/>
+  <line x1="40" y1="35" x2="53" y2="34" stroke="#8890b8" stroke-width="1.2"/>
+</svg>`,
+  "proud": `<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="30" cy="35" rx="21" ry="19" fill="#fff8ee" stroke="#e8a020" stroke-width="2"/>
+  <polygon points="10,19 7,7 20,17" fill="#fff8ee" stroke="#e8a020" stroke-width="1.8"/>
+  <polygon points="50,19 53,7 40,17" fill="#fff8ee" stroke="#e8a020" stroke-width="1.8"/>
+  <polygon points="11,18 9,10 18,17" fill="#ffe8a0"/>
+  <polygon points="49,18 51,10 42,17" fill="#ffe8a0"/>
+  <!-- confident half-closed eyes with raised brows -->
+  <path d="M17,22 Q22,19 27,22" stroke="#e8a020" stroke-width="2" fill="none"/>
+  <path d="M33,22 Q38,19 43,22" stroke="#e8a020" stroke-width="2" fill="none"/>
+  <path d="M17,27 Q22,24 27,27" stroke="#333" stroke-width="2.5" fill="#ffe8a0" stroke-linecap="round"/>
+  <line x1="17" y1="27" x2="27" y2="27" stroke="#333" stroke-width="2"/>
+  <path d="M33,27 Q38,24 43,27" stroke="#333" stroke-width="2.5" fill="#ffe8a0" stroke-linecap="round"/>
+  <line x1="33" y1="27" x2="43" y2="27" stroke="#333" stroke-width="2"/>
+  <!-- satisfied smile -->
+  <path d="M20,41 Q30,50 40,41" stroke="#e8a020" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <circle cx="30" cy="36" r="1.5" fill="#e8a020"/>
+  <!-- small crown -->
+  <polygon points="21,12 25,5 30,10 35,5 39,12" fill="#ffe840" stroke="#e8a020" stroke-width="1.5"/>
+  <line x1="7" y1="33" x2="20" y2="34" stroke="#e8a020" stroke-width="1.2"/>
+  <line x1="40" y1="34" x2="53" y2="33" stroke="#e8a020" stroke-width="1.2"/>
+</svg>`,
+  "worried": `<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="30" cy="35" rx="21" ry="19" fill="#fff5ee" stroke="#d4884a" stroke-width="2"/>
+  <polygon points="10,19 7,7 20,17" fill="#fff5ee" stroke="#d4884a" stroke-width="1.8"/>
+  <polygon points="50,19 53,7 40,17" fill="#fff5ee" stroke="#d4884a" stroke-width="1.8"/>
+  <polygon points="11,18 9,10 18,17" fill="#ffd0a8"/>
+  <polygon points="49,18 51,10 42,17" fill="#ffd0a8"/>
+  <!-- inner-corner-up worried brows -->
+  <line x1="17" y1="24" x2="26" y2="22" stroke="#d4884a" stroke-width="2.2"/>
+  <line x1="34" y1="22" x2="43" y2="24" stroke="#d4884a" stroke-width="2.2"/>
+  <!-- oval worried eyes -->
+  <ellipse cx="22" cy="30" rx="4" ry="4.5" fill="white" stroke="#333" stroke-width="1.8"/>
+  <circle cx="22" cy="31" r="2" fill="#555"/>
+  <ellipse cx="38" cy="30" rx="4" ry="4.5" fill="white" stroke="#333" stroke-width="1.8"/>
+  <circle cx="38" cy="31" r="2" fill="#555"/>
+  <!-- sweat drop -->
+  <path d="M46,10 Q48.5,6 51,10 Q51,14 48.5,14 Q46,14 46,10" fill="#a8d8f0" stroke="#7ab0d8" stroke-width="1"/>
+  <!-- wavy worried mouth -->
+  <path d="M21,44 Q25,40 29,44 Q33,48 37,44" stroke="#d4884a" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <circle cx="30" cy="37" r="1.5" fill="#d4884a"/>
+  <line x1="7" y1="34" x2="20" y2="35" stroke="#d4884a" stroke-width="1.2"/>
+  <line x1="40" y1="35" x2="53" y2="34" stroke="#d4884a" stroke-width="1.2"/>
+</svg>`,
+  "confused": `<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="30" cy="35" rx="21" ry="19" fill="#f5f0ff" stroke="#9878cc" stroke-width="2"/>
+  <polygon points="10,19 7,7 20,17" fill="#f5f0ff" stroke="#9878cc" stroke-width="1.8"/>
+  <polygon points="50,19 53,7 40,17" fill="#f5f0ff" stroke="#9878cc" stroke-width="1.8"/>
+  <polygon points="11,18 9,10 18,17" fill="#d8c4f0"/>
+  <polygon points="49,18 51,10 42,17" fill="#d8c4f0"/>
+  <!-- asymmetric brows -->
+  <line x1="16" y1="25" x2="26" y2="23" stroke="#9878cc" stroke-width="2"/>
+  <line x1="34" y1="24" x2="44" y2="24" stroke="#9878cc" stroke-width="2"/>
+  <!-- one big eye, one squinting -->
+  <circle cx="22" cy="30" r="5" fill="white" stroke="#333" stroke-width="1.8"/>
+  <circle cx="22" cy="30" r="2.5" fill="#333"/>
+  <circle cx="23" cy="28.5" r="1" fill="white"/>
+  <path d="M33,30 Q38,27 43,30" stroke="#333" stroke-width="2.2" fill="none"/>
+  <line x1="33" y1="30" x2="43" y2="30" stroke="#333" stroke-width="1.5"/>
+  <!-- spiral on one side -->
+  <path d="M44,22 Q47,19 46,22 Q45,25 48,23" stroke="#9878cc" stroke-width="1.5" fill="none"/>
+  <!-- question marks -->
+  <text x="27" y="7" font-size="11" fill="#9878cc" font-weight="bold">?</text>
+  <!-- wobbly mouth -->
+  <path d="M22,44 Q26,47 30,43 Q34,40 38,44" stroke="#9878cc" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <circle cx="30" cy="38" r="1.5" fill="#9878cc"/>
+  <line x1="7" y1="34" x2="20" y2="35" stroke="#9878cc" stroke-width="1.2"/>
+  <line x1="40" y1="35" x2="53" y2="34" stroke="#9878cc" stroke-width="1.2"/>
+</svg>`,
+  "embarrassed": `<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="30" cy="35" rx="21" ry="19" fill="#fff0f2" stroke="#e08090" stroke-width="2"/>
+  <polygon points="10,19 7,7 20,17" fill="#fff0f2" stroke="#e08090" stroke-width="1.8"/>
+  <polygon points="50,19 53,7 40,17" fill="#fff0f2" stroke="#e08090" stroke-width="1.8"/>
+  <polygon points="11,18 9,10 18,17" fill="#ffc0cc"/>
+  <polygon points="49,18 51,10 42,17" fill="#ffc0cc"/>
+  <!-- downward glancing eyes - avoidant -->
+  <circle cx="22" cy="30" r="4.5" fill="white" stroke="#333" stroke-width="1.8"/>
+  <circle cx="22" cy="32" r="2" fill="#333"/>
+  <circle cx="38" cy="30" r="4.5" fill="white" stroke="#333" stroke-width="1.8"/>
+  <circle cx="38" cy="32" r="2" fill="#333"/>
+  <!-- BIG blush -->
+  <ellipse cx="14" cy="36" rx="7" ry="4.5" fill="#ff9090" opacity="0.55"/>
+  <ellipse cx="46" cy="36" rx="7" ry="4.5" fill="#ff9090" opacity="0.55"/>
+  <!-- tiny nervous smile -->
+  <path d="M24,44 Q30,48 36,44" stroke="#e08090" stroke-width="2" fill="none"/>
+  <!-- hand/paw covering mouth implication -->
+  <circle cx="30" cy="37" r="1.5" fill="#e08090"/>
+  <!-- squiggly lines above for flustered -->
+  <path d="M24,8 Q26,5 28,8" stroke="#e08090" stroke-width="1.5" fill="none"/>
+  <path d="M32,8 Q34,5 36,8" stroke="#e08090" stroke-width="1.5" fill="none"/>
+  <line x1="7" y1="34" x2="19" y2="35" stroke="#e08090" stroke-width="1.2"/>
+  <line x1="41" y1="35" x2="53" y2="34" stroke="#e08090" stroke-width="1.2"/>
+</svg>`,
+  "calm": `<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="30" cy="35" rx="21" ry="19" fill="#eefaf5" stroke="#60c090" stroke-width="2"/>
+  <polygon points="10,19 7,7 20,17" fill="#eefaf5" stroke="#60c090" stroke-width="1.8"/>
+  <polygon points="50,19 53,7 40,17" fill="#eefaf5" stroke="#60c090" stroke-width="1.8"/>
+  <polygon points="11,18 9,10 18,17" fill="#a8e8c8"/>
+  <polygon points="49,18 51,10 42,17" fill="#a8e8c8"/>
+  <!-- peaceful closed happy eyes -->
+  <path d="M17,28 Q22,24 27,28" stroke="#333" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <path d="M33,28 Q38,24 43,28" stroke="#333" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <!-- soft smile -->
+  <path d="M23,41 Q30,47 37,41" stroke="#60c090" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- tiny floating cloud/bubbles -->
+  <circle cx="10" cy="8" r="3" fill="#c8eede" opacity="0.8"/>
+  <circle cx="15" cy="5" r="3.5" fill="#c8eede" opacity="0.8"/>
+  <circle cx="21" cy="7" r="3" fill="#c8eede" opacity="0.8"/>
+  <circle cx="30" cy="37" r="1.5" fill="#60c090"/>
+  <line x1="7" y1="33" x2="20" y2="34" stroke="#60c090" stroke-width="1.2"/>
+  <line x1="40" y1="34" x2="53" y2="33" stroke="#60c090" stroke-width="1.2"/>
+</svg>`,
+  "hungry": `<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="30" cy="35" rx="21" ry="19" fill="#fff5e8" stroke="#e07820" stroke-width="2"/>
+  <polygon points="10,19 7,7 20,17" fill="#fff5e8" stroke="#e07820" stroke-width="1.8"/>
+  <polygon points="50,19 53,7 40,17" fill="#fff5e8" stroke="#e07820" stroke-width="1.8"/>
+  <polygon points="11,18 9,10 18,17" fill="#ffd8a0"/>
+  <polygon points="49,18 51,10 42,17" fill="#ffd8a0"/>
+  <!-- hopeful big shiny eyes -->
+  <circle cx="22" cy="29" r="5" fill="white" stroke="#333" stroke-width="1.8"/>
+  <circle cx="22" cy="30" r="2.5" fill="#333"/>
+  <circle cx="23.5" cy="27.5" r="1.5" fill="white"/>
+  <circle cx="38" cy="29" r="5" fill="white" stroke="#333" stroke-width="1.8"/>
+  <circle cx="38" cy="30" r="2.5" fill="#333"/>
+  <circle cx="39.5" cy="27.5" r="1.5" fill="white"/>
+  <!-- open smile with tongue -->
+  <path d="M21,41 Q30,51 39,41" stroke="#e07820" stroke-width="2.2" fill="#ffe0b0" stroke-linecap="round"/>
+  <path d="M27,48 Q30,53 33,48" fill="#ff9090" stroke="#e07820" stroke-width="1"/>
+  <!-- drool drop -->
+  <path d="M37,44 Q39,48 38,50 Q36,52 37,50 Q38,48 37,44" fill="#88ccff" opacity="0.7" stroke="#88aaff" stroke-width="1"/>
+  <circle cx="30" cy="37" r="1.5" fill="#e07820"/>
+  <line x1="7" y1="33" x2="20" y2="34" stroke="#e07820" stroke-width="1.2"/>
+  <line x1="40" y1="34" x2="53" y2="33" stroke="#e07820" stroke-width="1.2"/>
+</svg>`,
+  "nervous": `<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="30" cy="35" rx="21" ry="19" fill="#eeeefc" stroke="#8888d8" stroke-width="2"/>
+  <polygon points="10,18 8,5 20,16" fill="#eeeefc" stroke="#8888d8" stroke-width="1.8"/>
+  <polygon points="50,18 52,5 40,16" fill="#eeeefc" stroke="#8888d8" stroke-width="1.8"/>
+  <polygon points="11,17 9,7 18,16" fill="#c4c4f0"/>
+  <polygon points="49,17 51,7 42,16" fill="#c4c4f0"/>
+  <!-- side-glancing shifty eyes -->
+  <circle cx="22" cy="29" r="4.5" fill="white" stroke="#333" stroke-width="1.8"/>
+  <circle cx="24" cy="30" r="2" fill="#333"/>
+  <circle cx="38" cy="29" r="4.5" fill="white" stroke="#333" stroke-width="1.8"/>
+  <circle cx="40" cy="30" r="2" fill="#333"/>
+  <!-- sweat drops x2 -->
+  <path d="M44,10 Q46,6 48,10 Q48,14 46,14 Q44,14 44,10" fill="#a8d8f0" stroke="#88aad8" stroke-width="1"/>
+  <path d="M49,15 Q50.5,12 52,15 Q52,18 50.5,18 Q49,18 49,15" fill="#a8d8f0" stroke="#88aad8" stroke-width="1"/>
+  <!-- teeth-clenched smile -->
+  <path d="M21,43 Q30,47 39,43" stroke="#8888d8" stroke-width="2" fill="#dde0ff"/>
+  <line x1="25" y1="43" x2="25" y2="45" stroke="#aaa" stroke-width="1"/>
+  <line x1="30" y1="44" x2="30" y2="46" stroke="#aaa" stroke-width="1"/>
+  <line x1="35" y1="43" x2="35" y2="45" stroke="#aaa" stroke-width="1"/>
+  <circle cx="30" cy="38" r="1.5" fill="#8888d8"/>
+  <line x1="7" y1="34" x2="20" y2="35" stroke="#8888d8" stroke-width="1.2"/>
+  <line x1="40" y1="35" x2="53" y2="34" stroke="#8888d8" stroke-width="1.2"/>
+</svg>`,
+  "relieved": `<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="30" cy="35" rx="21" ry="19" fill="#eefbf0" stroke="#58b870" stroke-width="2"/>
+  <polygon points="10,19 7,7 20,17" fill="#eefbf0" stroke="#58b870" stroke-width="1.8"/>
+  <polygon points="50,19 53,7 40,17" fill="#eefbf0" stroke="#58b870" stroke-width="1.8"/>
+  <polygon points="11,18 9,10 18,17" fill="#a8ddb8"/>
+  <polygon points="49,18 51,10 42,17" fill="#a8ddb8"/>
+  <!-- smiley relaxed closed eyes -->
+  <path d="M17,27 Q22,24 27,27" stroke="#333" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <path d="M33,27 Q38,24 43,27" stroke="#333" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <!-- eyebrows relaxed down -->
+  <!-- big sigh smile -->
+  <path d="M20,41 Q30,50 40,41" stroke="#58b870" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <!-- sigh wisp -->
+  <path d="M36,12 Q40,8 44,10 Q48,12 46,16" stroke="#a8d8b8" stroke-width="2" fill="none" stroke-dasharray="2,2" stroke-linecap="round"/>
+  <!-- small blush of relief -->
+  <ellipse cx="15" cy="36" rx="5" ry="3" fill="#a8d8b8" opacity="0.5"/>
+  <ellipse cx="45" cy="36" rx="5" ry="3" fill="#a8d8b8" opacity="0.5"/>
+  <circle cx="30" cy="37" r="1.5" fill="#58b870"/>
+  <line x1="7" y1="33" x2="20" y2="34" stroke="#58b870" stroke-width="1.2"/>
+  <line x1="40" y1="34" x2="53" y2="33" stroke="#58b870" stroke-width="1.2"/>
+</svg>`,
+  "hopeful": `<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="30" cy="35" rx="21" ry="19" fill="#fffaee" stroke="#d8b030" stroke-width="2"/>
+  <polygon points="10,19 7,7 20,17" fill="#fffaee" stroke="#d8b030" stroke-width="1.8"/>
+  <polygon points="50,19 53,7 40,17" fill="#fffaee" stroke="#d8b030" stroke-width="1.8"/>
+  <polygon points="11,18 9,10 18,17" fill="#ffe8a0"/>
+  <polygon points="49,18 51,10 42,17" fill="#ffe8a0"/>
+  <!-- upward-gazing eyes -->
+  <circle cx="22" cy="30" r="4.5" fill="white" stroke="#333" stroke-width="1.8"/>
+  <circle cx="22" cy="28" r="2.2" fill="#333"/>
+  <circle cx="23.5" cy="27" r="0.9" fill="white"/>
+  <circle cx="38" cy="30" r="4.5" fill="white" stroke="#333" stroke-width="1.8"/>
+  <circle cx="38" cy="28" r="2.2" fill="#333"/>
+  <circle cx="39.5" cy="27" r="0.9" fill="white"/>
+  <!-- soft smile -->
+  <path d="M22,42 Q30,49 38,42" stroke="#d8b030" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- stars above -->
+  <text x="22" y="9" font-size="8" fill="#f0c030">★</text>
+  <text x="30" y="6" font-size="10" fill="#f0c030">★</text>
+  <text x="38" y="9" font-size="8" fill="#f0c030">★</text>
+  <circle cx="30" cy="37" r="1.5" fill="#d8b030"/>
+  <line x1="7" y1="33" x2="20" y2="34" stroke="#d8b030" stroke-width="1.2"/>
+  <line x1="40" y1="34" x2="53" y2="33" stroke="#d8b030" stroke-width="1.2"/>
+</svg>`
+};
+const SENTENCE_POOL = [
+  {
+    "adj": "happy",
+    "also": [
+      "excited"
+    ],
+    "level": 1,
+    "pronoun": "I",
+    "verb": "am",
+    "context": "🎂 It is my birthday!"
+  },
+  {
+    "adj": "happy",
+    "also": [
+      "excited"
+    ],
+    "level": 1,
+    "pronoun": "She",
+    "verb": "is",
+    "context": "😁 She is smiling a lot."
+  },
+  {
+    "adj": "happy",
+    "also": [
+      "excited"
+    ],
+    "level": 1,
+    "pronoun": "He",
+    "verb": "is",
+    "context": "🌈 It is a sunny day!"
+  },
+  {
+    "adj": "sad",
+    "also": [
+      "worried"
+    ],
+    "level": 1,
+    "pronoun": "She",
+    "verb": "is",
+    "context": "🐱 Her cat is gone."
+  },
+  {
+    "adj": "sad",
+    "also": [
+      "worried"
+    ],
+    "level": 1,
+    "pronoun": "He",
+    "verb": "is",
+    "context": "🍬 He has no sweets left."
+  },
+  {
+    "adj": "sad",
+    "also": [
+      "worried"
+    ],
+    "level": 1,
+    "pronoun": "I",
+    "verb": "am",
+    "context": "⛈️ It is a very bad day."
+  },
+  {
+    "adj": "angry",
+    "also": [],
+    "level": 1,
+    "pronoun": "He",
+    "verb": "is",
+    "context": "😠 His toy is broken!"
+  },
+  {
+    "adj": "angry",
+    "also": [],
+    "level": 1,
+    "pronoun": "She",
+    "verb": "is",
+    "context": "😤 She did not get a turn!"
+  },
+  {
+    "adj": "angry",
+    "also": [],
+    "level": 1,
+    "pronoun": "I",
+    "verb": "am",
+    "context": "👊 It is not fair!"
+  },
+  {
+    "adj": "scared",
+    "also": [],
+    "level": 1,
+    "pronoun": "I",
+    "verb": "am",
+    "context": "🐕 The dog is very big!"
+  },
+  {
+    "adj": "scared",
+    "also": [],
+    "level": 1,
+    "pronoun": "She",
+    "verb": "is",
+    "context": "🕷️ She sees a big spider!"
+  },
+  {
+    "adj": "scared",
+    "also": [],
+    "level": 1,
+    "pronoun": "He",
+    "verb": "is",
+    "context": "⚡ There is a big storm!"
+  },
+  {
+    "adj": "tired",
+    "also": [],
+    "level": 1,
+    "pronoun": "She",
+    "verb": "is",
+    "context": "🌙 It is very late at night."
+  },
+  {
+    "adj": "tired",
+    "also": [],
+    "level": 1,
+    "pronoun": "I",
+    "verb": "am",
+    "context": "😪 I need to sleep now."
+  },
+  {
+    "adj": "tired",
+    "also": [],
+    "level": 1,
+    "pronoun": "He",
+    "verb": "is",
+    "context": "🥵 He ran all day long."
+  },
+  {
+    "adj": "excited",
+    "also": [
+      "happy"
+    ],
+    "level": 1,
+    "pronoun": "He",
+    "verb": "is",
+    "context": "🎡 He goes to the park tomorrow!"
+  },
+  {
+    "adj": "excited",
+    "also": [
+      "happy"
+    ],
+    "level": 1,
+    "pronoun": "She",
+    "verb": "is",
+    "context": "🎄 Christmas is tomorrow!"
+  },
+  {
+    "adj": "excited",
+    "also": [
+      "happy"
+    ],
+    "level": 1,
+    "pronoun": "I",
+    "verb": "am",
+    "context": "✈️ We go on a trip today!"
+  },
+  {
+    "adj": "bored",
+    "also": [],
+    "level": 2,
+    "pronoun": "I",
+    "verb": "am",
+    "context": "😑 Nothing to do today."
+  },
+  {
+    "adj": "bored",
+    "also": [],
+    "level": 2,
+    "pronoun": "He",
+    "verb": "is",
+    "context": "🌧️ Rain again. No games."
+  },
+  {
+    "adj": "bored",
+    "also": [],
+    "level": 2,
+    "pronoun": "She",
+    "verb": "is",
+    "context": "🔁 Same thing every day."
+  },
+  {
+    "adj": "surprised",
+    "also": [
+      "excited",
+      "happy"
+    ],
+    "level": 2,
+    "pronoun": "She",
+    "verb": "is",
+    "context": "🚪 Friends are at the door!"
+  },
+  {
+    "adj": "surprised",
+    "also": [
+      "excited",
+      "happy"
+    ],
+    "level": 2,
+    "pronoun": "He",
+    "verb": "is",
+    "context": "🎁 A gift — he did not know!"
+  },
+  {
+    "adj": "surprised",
+    "also": [
+      "excited",
+      "happy"
+    ],
+    "level": 2,
+    "pronoun": "I",
+    "verb": "am",
+    "context": "😮 I did not see that!"
+  },
+  {
+    "adj": "lonely",
+    "also": [
+      "sad"
+    ],
+    "level": 2,
+    "pronoun": "He",
+    "verb": "is",
+    "context": "👋 No friends today."
+  },
+  {
+    "adj": "lonely",
+    "also": [
+      "sad"
+    ],
+    "level": 2,
+    "pronoun": "She",
+    "verb": "feels",
+    "context": "🏃 Nobody plays with her."
+  },
+  {
+    "adj": "lonely",
+    "also": [
+      "sad"
+    ],
+    "level": 2,
+    "pronoun": "I",
+    "verb": "feel",
+    "context": "🏠 I am home alone."
+  },
+  {
+    "adj": "proud",
+    "also": [
+      "happy"
+    ],
+    "level": 2,
+    "pronoun": "I",
+    "verb": "am",
+    "context": "🏆 I won the contest!"
+  },
+  {
+    "adj": "proud",
+    "also": [
+      "happy"
+    ],
+    "level": 2,
+    "pronoun": "She",
+    "verb": "is",
+    "context": "🥇 She got first place!"
+  },
+  {
+    "adj": "proud",
+    "also": [
+      "happy"
+    ],
+    "level": 2,
+    "pronoun": "He",
+    "verb": "feels",
+    "context": "🤝 He helped his friend."
+  },
+  {
+    "adj": "worried",
+    "also": [
+      "sad"
+    ],
+    "level": 2,
+    "pronoun": "She",
+    "verb": "is",
+    "context": "😟 Her friend is not well."
+  },
+  {
+    "adj": "worried",
+    "also": [
+      "sad"
+    ],
+    "level": 2,
+    "pronoun": "I",
+    "verb": "am",
+    "context": "🐈 My cat is not home yet."
+  },
+  {
+    "adj": "worried",
+    "also": [
+      "sad"
+    ],
+    "level": 2,
+    "pronoun": "He",
+    "verb": "is",
+    "context": "🎒 His bag is lost."
+  },
+  {
+    "adj": "confused",
+    "also": [],
+    "level": 2,
+    "pronoun": "He",
+    "verb": "is",
+    "context": "🌀 He does not understand."
+  },
+  {
+    "adj": "confused",
+    "also": [],
+    "level": 2,
+    "pronoun": "She",
+    "verb": "feels",
+    "context": "🗺️ The map is very hard."
+  },
+  {
+    "adj": "confused",
+    "also": [],
+    "level": 2,
+    "pronoun": "I",
+    "verb": "feel",
+    "context": "🤔 I do not know the answer."
+  },
+  {
+    "adj": "embarrassed",
+    "also": [],
+    "level": 3,
+    "pronoun": "We",
+    "verb": "are",
+    "context": "📚 We forgot our homework."
+  },
+  {
+    "adj": "embarrassed",
+    "also": [],
+    "level": 3,
+    "pronoun": "He",
+    "verb": "is",
+    "context": "💥 He fell in front of everyone!"
+  },
+  {
+    "adj": "embarrassed",
+    "also": [],
+    "level": 3,
+    "pronoun": "She",
+    "verb": "is",
+    "context": "👀 Everyone looks at her."
+  },
+  {
+    "adj": "calm",
+    "also": [],
+    "level": 3,
+    "pronoun": "They",
+    "verb": "are",
+    "context": "🧘 They breathe slowly."
+  },
+  {
+    "adj": "calm",
+    "also": [],
+    "level": 3,
+    "pronoun": "She",
+    "verb": "feels",
+    "context": "📖 She reads in her room."
+  },
+  {
+    "adj": "calm",
+    "also": [],
+    "level": 3,
+    "pronoun": "I",
+    "verb": "feel",
+    "context": "🎵 I listen to soft music."
+  },
+  {
+    "adj": "nervous",
+    "also": [
+      "scared",
+      "worried"
+    ],
+    "level": 3,
+    "pronoun": "I",
+    "verb": "feel",
+    "context": "🎤 I speak in front of the class."
+  },
+  {
+    "adj": "nervous",
+    "also": [
+      "scared",
+      "worried"
+    ],
+    "level": 3,
+    "pronoun": "She",
+    "verb": "is",
+    "context": "🏫 It is her first day at school."
+  },
+  {
+    "adj": "nervous",
+    "also": [
+      "scared",
+      "worried"
+    ],
+    "level": 3,
+    "pronoun": "He",
+    "verb": "feels",
+    "context": "🎭 He acts in the school play."
+  },
+  {
+    "adj": "relieved",
+    "also": [
+      "happy"
+    ],
+    "level": 3,
+    "pronoun": "She",
+    "verb": "feels",
+    "context": "😮‍💨 The test is finally over!"
+  },
+  {
+    "adj": "relieved",
+    "also": [
+      "happy"
+    ],
+    "level": 3,
+    "pronoun": "I",
+    "verb": "am",
+    "context": "🔍 I found my lost pen!"
+  },
+  {
+    "adj": "relieved",
+    "also": [
+      "happy"
+    ],
+    "level": 3,
+    "pronoun": "He",
+    "verb": "is",
+    "context": "🩺 The doctor says all is fine."
+  },
+  {
+    "adj": "hopeful",
+    "also": [
+      "excited"
+    ],
+    "level": 3,
+    "pronoun": "He",
+    "verb": "feels",
+    "context": "🌟 He waits for good news."
+  },
+  {
+    "adj": "hopeful",
+    "also": [
+      "excited"
+    ],
+    "level": 3,
+    "pronoun": "She",
+    "verb": "is",
+    "context": "🎅 She waits for Santa."
+  },
+  {
+    "adj": "hopeful",
+    "also": [
+      "excited"
+    ],
+    "level": 3,
+    "pronoun": "I",
+    "verb": "feel",
+    "context": "🌅 Tomorrow will be better."
+  },
+  {
+    "adj": "hungry",
+    "also": [],
+    "level": 3,
+    "pronoun": "I",
+    "verb": "am",
+    "context": "🍽️ It is lunch time!"
+  },
+  {
+    "adj": "hungry",
+    "also": [],
+    "level": 3,
+    "pronoun": "He",
+    "verb": "is",
+    "context": "🥐 No breakfast this morning."
+  },
+  {
+    "adj": "hungry",
+    "also": [],
+    "level": 3,
+    "pronoun": "We",
+    "verb": "are",
+    "context": "🍕 We want pizza now!"
+  }
+];
+const THRESHOLD = 0.8;
+
+// Unique adjectives per level (cumulative)
+const LEVEL_ADJS = {
+  1: [...new Set(SENTENCE_POOL.filter(s=>s.level===1).map(s=>s.adj))],
+  2: [...new Set(SENTENCE_POOL.filter(s=>s.level<=2).map(s=>s.adj))],
+  3: [...new Set(SENTENCE_POOL.map(s=>s.adj))],
+};
+
+// Build a randomised set of sentences for a level:
+// one randomly-picked variant per adjective in scope
+function buildLevelSentences(lvl) {
+  const adjs = LEVEL_ADJS[lvl];
+  return adjs.map(adj => {
+    const variants = SENTENCE_POOL.filter(s => s.adj === adj && s.level <= lvl);
+    return variants[Math.floor(Math.random() * variants.length)];
+  });
+}
+
+// Unlocked state persisted in memory
+const unlocked = {1:true, 2:false, 3:false};
+
+let mode     = 'a';
+let curLevel = 1;
+let order    = [];
+let qIdx     = 0;
+let scoreOk  = 0;
+let scoreBad = 0;
+let answered = false;
+let dragWord = null;
+
+// ── UTILS ──────────────────────────────────────────────────────────────────
+function shuffle(arr) {
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+
+// ── BADGE UPDATE ──────────────────────────────────────────────────────────
+function updateBadges() {
+  for(let l=1;l<=3;l++) {
+    const b = document.getElementById(`badge-${l}`);
+    b.className = 'lvl-badge';
+    if(l === curLevel)        b.classList.add('active');
+    else if(unlocked[l])      b.classList.add('done');
+    else                      b.classList.add('locked');
+    const lock = b.querySelector('.lock');
+    if(lock) lock.style.display = unlocked[l]||l===curLevel ? 'none' : '';
+  }
+}
+
+// ── START LEVEL ──────────────────────────────────────────────────────────
+// Current level's sentences (rebuilt randomly each play)
+let curSentences = [];
+let curWords = [];
+
+function startLevel(lvl) {
+  curLevel = lvl;
+  scoreOk = scoreBad = 0;
+  qIdx = 0;
+  answered = false;
+  curSentences = buildLevelSentences(lvl);
+  curWords = LEVEL_ADJS[lvl];
+  order = shuffle([...Array(curSentences.length).keys()]);
+  document.getElementById('score-ok').textContent  = 0;
+  document.getElementById('score-bad').textContent = 0;
+  document.getElementById('q-total').textContent   = curSentences.length;
+  document.getElementById('lvl-result').classList.remove('show');
+  document.getElementById('trophy-screen').classList.remove('show');
+  document.getElementById('q-card').style.display  = '';
+  document.getElementById('pill-q').style.display  = '';
+  document.getElementById('progress').style.width  = '0%';
+  updateBadges();
+  renderQuestion();
+}
+
+function retryLevel()    { startLevel(curLevel); }
+function startNextLevel() { startLevel(curLevel+1); }
+function fullRestart()    { unlocked[2]=false; unlocked[3]=false; startLevel(1); }
+
+function switchMode(m) {
+  mode = m;
+  document.getElementById('tab-a').classList.toggle('active', m==='a');
+  document.getElementById('tab-b').classList.toggle('active', m==='b');
+  startLevel(curLevel);
+}
+
+// ── RENDER QUESTION ──────────────────────────────────────────────────────
+function renderQuestion() {
+  answered = false;
+  document.getElementById('btn-next').classList.remove('visible');
+  const total = curSentences.length;
+  const s     = curSentences[order[qIdx]];
+  document.getElementById('q-num').textContent  = `Question ${qIdx+1} / ${total}`;
+  document.getElementById('q-idx').textContent  = qIdx+1;
+  document.getElementById('progress').style.width = `${(qIdx/total)*100}%`;
+  if(mode==='a') renderModeA(s);
+  else           renderModeB(s);
+}
+
+function sentenceHTML(s, blankTag) {
+  return `<span class="q-pro">${s.pronoun}</span> `
+       + `<span class="q-verb">${s.verb}</span> `
+       + blankTag + ` `
+       + `<span class="q-context">${s.context}</span>`;
+}
+
+// ── MODE A ────────────────────────────────────────────────────────────────
+function renderModeA(s) {
+  document.getElementById('mode-a').style.display='';
+  document.getElementById('mode-b').style.display='none';
+  document.getElementById('q-sentence').innerHTML =
+    sentenceHTML(s, '<span class="q-blank" id="the-blank">___</span>');
+
+  const catNames = shuffle([...curWords]);
+  const grid = document.getElementById('mode-a');
+  grid.innerHTML='';
+  catNames.forEach(name => {
+    const btn = document.createElement('button');
+    btn.className='cat-btn';
+    btn.innerHTML = CATS[name] + `<span class="lbl">${name}</span>`;
+    btn.dataset.name=name;
+    btn.onclick = ()=>handleCatClick(name, s.adj, btn);
+    grid.appendChild(btn);
+  });
+}
+
+function handleCatClick(chosen, correct, btn) {
+  if(answered) return;
+  answered=true;
+  const s = curSentences[order[qIdx]];
+  const also = s.also || [];
+  const blank = document.getElementById('the-blank');
+  document.querySelectorAll('.cat-btn').forEach(b=>b.disabled=true);
+  // Always highlight the primary correct cat in green
+  document.querySelectorAll('.cat-btn').forEach(b=>{ if(b.dataset.name===correct) b.classList.add('correct'); });
+  // Highlight also-correct cats in amber
+  document.querySelectorAll('.cat-btn').forEach(b=>{ if(also.includes(b.dataset.name)) b.classList.add('also-correct'); });
+
+  if(chosen===correct) {
+    blank.textContent=correct; blank.classList.add('correct');
+    scoreOk++; document.getElementById('score-ok').textContent=scoreOk;
+    showToast('✅ Well done!','ok');
+  } else if(also.includes(chosen)) {
+    btn.classList.remove('also-correct'); btn.classList.add('also-correct');
+    blank.textContent=chosen; blank.classList.add('also-correct');
+    scoreOk++; document.getElementById('score-ok').textContent=scoreOk;
+    showToast(`✅ Also correct! Best answer: ${correct}`,'also',true);
+  } else {
+    btn.classList.add('wrong');
+    blank.textContent=chosen; blank.classList.add('wrong');
+    scoreBad++; document.getElementById('score-bad').textContent=scoreBad;
+    const hint = also.length ? ` (also: ${also.join(', ')})` : '';
+    showToast(`❌ It was: ${correct}${hint}`,'bad');
+  }
+  document.getElementById('btn-next').classList.add('visible');
+  document.getElementById('btn-next').textContent =
+    qIdx+1>=curSentences.length ? 'See results 🏆' : 'Next ➜';
+}
+
+// ── MODE B ────────────────────────────────────────────────────────────────
+function renderModeB(s) {
+  document.getElementById('mode-a').style.display='none';
+  document.getElementById('mode-b').style.display='';
+  document.getElementById('q-sentence').innerHTML =
+    sentenceHTML(s, '<span class="drop-target" id="the-drop" '
+      +'ondragover="dragOver(event)" ondrop="dropWord(event)"></span>');
+
+  const words = shuffle([...curWords]);
+  const zone  = document.getElementById('mode-b');
+  zone.innerHTML='';
+  words.forEach(w=>{
+    const chip=document.createElement('div');
+    chip.className='drag-chip'; chip.textContent=w; chip.dataset.word=w;
+    chip.draggable=true;
+    chip.ondragstart=()=>{ dragWord=w; chip.classList.add('dragging'); };
+    chip.ondragend=()=>chip.classList.remove('dragging');
+    chip.onclick=()=>handleChipClick(w, s.adj);
+    zone.appendChild(chip);
+  });
+}
+
+function dragOver(e) { e.preventDefault(); document.getElementById('the-drop').classList.add('drag-over'); }
+function dropWord(e) { e.preventDefault(); if(answered) return; handleChipClick(dragWord, curSentences[order[qIdx]].adj); }
+
+function handleChipClick(chosen, correct) {
+  if(answered) return;
+  answered=true;
+  const s = curSentences[order[qIdx]];
+  const also = s.also || [];
+  const drop = document.getElementById('the-drop');
+  drop.classList.remove('drag-over'); drop.textContent=chosen;
+  document.querySelectorAll('.drag-chip').forEach(c=>{
+    c.style.pointerEvents='none';
+    if(c.dataset.word===correct) c.style.border='2px solid var(--green)';
+    if(also.includes(c.dataset.word)) c.classList.add('also-correct-chip');
+    if(c.dataset.word===chosen) c.classList.add('used');
+  });
+  if(chosen===correct) {
+    drop.classList.add('correct');
+    scoreOk++; document.getElementById('score-ok').textContent=scoreOk;
+    showToast('✅ Well done!','ok');
+  } else if(also.includes(chosen)) {
+    drop.classList.add('also-correct');
+    scoreOk++; document.getElementById('score-ok').textContent=scoreOk;
+    showToast(`✅ Also correct! Best answer: ${correct}`,'also',true);
+  } else {
+    drop.classList.add('wrong');
+    scoreBad++; document.getElementById('score-bad').textContent=scoreBad;
+    const hint = also.length ? ` (also: ${also.join(', ')})` : '';
+    showToast(`❌ It was: ${correct}${hint}`,'bad');
+  }
+  document.getElementById('btn-next').classList.add('visible');
+  document.getElementById('btn-next').textContent =
+    qIdx+1>=curSentences.length ? 'See results 🏆' : 'Next ➜';
+}
+
+// ── NEXT ──────────────────────────────────────────────────────────────────
+function nextQuestion() {
+  clearToast();
+  qIdx++;
+  if(qIdx>=curSentences.length) showLevelResult();
+  else renderQuestion();
+}
+
+// ── LEVEL RESULT ──────────────────────────────────────────────────────────
+function showLevelResult() {
+  const total = curSentences.length;
+  const pct   = scoreOk / total;
+  const pctPc = Math.round(pct*100);
+  const passed = pct >= THRESHOLD;
+
+  document.getElementById('q-card').style.display='none';
+  document.getElementById('mode-a').style.display='none';
+  document.getElementById('mode-b').style.display='none';
+  document.getElementById('btn-next').classList.remove('visible');
+  document.getElementById('pill-q').style.display='none';
+  document.getElementById('progress').style.width='100%';
+
+  let emoji, stars, title, sub;
+  if(pctPc===100) { emoji='🏆'; stars='★★★'; title='Perfect!'; }
+  else if(pctPc>=80) { emoji='🎉'; stars='★★☆'; title='Great job!'; }
+  else if(pctPc>=50) { emoji='😊'; stars='★☆☆'; title='Good try!'; }
+  else               { emoji='💪'; stars='☆☆☆'; title='Keep going!'; }
+
+  if(passed && curLevel<3) {
+    unlocked[curLevel+1]=true;
+    sub=`✅ Level ${curLevel+1} unlocked!`;
+  } else if(passed && curLevel===3) {
+    showTrophy(pctPc); return;
+  } else {
+    sub=`You need 80% to unlock the next level. (You got ${pctPc}%)`;
+  }
+
+  document.getElementById('res-emoji').textContent=emoji;
+  document.getElementById('res-stars').textContent=stars;
+  document.getElementById('res-title').textContent=title;
+  document.getElementById('res-score').textContent=`${scoreOk} / ${total} correct (${pctPc}%)`;
+  document.getElementById('res-sub').textContent=sub;
+
+  const btnNL=document.getElementById('btn-next-lvl');
+  if(passed && curLevel<3) {
+    btnNL.disabled=false;
+    btnNL.textContent=`Level ${curLevel+1} ➜`;
+  } else {
+    btnNL.disabled=true;
+    btnNL.textContent='Locked 🔒';
+  }
+
+  updateBadges();
+  document.getElementById('lvl-result').classList.add('show');
+}
+
+function showTrophy(pct) {
+  document.getElementById('trophy-score').textContent=
+    `You completed all 3 levels! Final score: ${scoreOk}/${curSentences.length} (${pct}%)`;
+  document.getElementById('trophy-screen').classList.add('show');
+  updateBadges();
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg, type, persist=false) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className=`toast ${type} show`;
+  clearTimeout(toastTimer);
+  if(!persist) {
+    toastTimer=setTimeout(()=>t.classList.remove('show'),1800);
+  }
+  // store whether current toast is persistent so nextQuestion can clear it
+  t.dataset.persist = persist ? '1' : '0';
+}
+function clearToast() {
+  const t=document.getElementById('toast');
+  if(t.dataset.persist==='1') t.classList.remove('show');
+}
+
+// ── START ─────────────────────────────────────────────────────────────────
+startLevel(1);
+</script>
+</body>
+</html>
