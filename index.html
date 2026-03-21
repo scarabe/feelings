@@ -1,47 +1,457 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Description" content="A fun English feelings vocabulary game for primary school students.">
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2685.5">
-  <style type="text/css">
-    body {background-color: #fff6ec}
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 26.0px 'Helvetica Neue'; color: #e0422e; -webkit-text-stroke: #e0422e}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px 'Helvetica Neue'; color: #21140d; -webkit-text-stroke: #21140d; background-color: #ffffff}
-    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px 'Helvetica Neue'; color: #21140d; -webkit-text-stroke: #21140d; background-color: #fff7e2}
-    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px 'Helvetica Neue'; color: #b29786; -webkit-text-stroke: #b29786; background-color: #ffffff}
-    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px 'Helvetica Neue'; color: #b29786; -webkit-text-stroke: #b29786}
-    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 13.0px 'Helvetica Neue'; color: #ffffff; -webkit-text-stroke: #ffffff}
-    p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 13.0px 'Helvetica Neue'; color: #b29786; -webkit-text-stroke: #b29786}
-    p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Helvetica Neue'; color: #21140d; -webkit-text-stroke: #21140d; min-height: 15.0px}
-    p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 11.0px 'Helvetica Neue'; color: #b29786; -webkit-text-stroke: #b29786}
-    p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 20.0px Times; color: #21140d; -webkit-text-stroke: #21140d; min-height: 24.0px}
-    p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 15.0px 'Helvetica Neue'; color: #21140d; -webkit-text-stroke: #21140d; background-color: #ffffff; min-height: 18.0px}
-    span.s1 {font-kerning: none}
-    span.s2 {font-kerning: none; color: #f1961c; -webkit-text-stroke: 0px #f1961c}
-    span.s3 {font-kerning: none; color: #e0422e; -webkit-text-stroke: 0px #e0422e}
-    span.s4 {font: 13.0px '.Apple Color Emoji UI'; font-kerning: none}
-    span.s5 {font: 13.0px '.Apple Color Emoji UI'; font-kerning: none; background-color: #ffffff}
-    span.s6 {font-kerning: none; background-color: #ffffff}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Feelings Game</title>
+<meta name="description" content="A fun English feelings vocabulary game for primary school students.">
+<meta name="theme-color" content="#F5A623">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Feelings Game">
+<link rel="manifest" href="manifest.webmanifest">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Lora:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream:  #FFF8F0;
+  --ink:    #2C1A0E;
+  --warm1:  #F5A623;
+  --warm2:  #E8593C;
+  --warm3:  #F06292;
+  --cool1:  #6A9FCF;
+  --green:  #3AAA6A;
+  --r:      18px;
+  --sh:     0 4px 20px rgba(44,26,14,0.10);
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+body {
+  font-family:'Nunito', sans-serif;
+  background: var(--cream);
+  background-image:
+    radial-gradient(ellipse at 20% 0%, #FFE4C8 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 100%, #FFD6C0 0%, transparent 50%);
+  min-height:100vh;
+  padding:16px;
+  color: var(--ink);
+}
+.topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:8px; }
+.title { font-size:clamp(18px,4.5vw,26px); font-weight:900; letter-spacing:-0.5px; color:var(--warm2); }
+.title span { color:var(--warm1); }
+.score-box { display:flex; gap:7px; align-items:center; }
+.pill { background:white; border-radius:30px; padding:5px 14px; font-size:13px; font-weight:700; box-shadow:var(--sh); border:2px solid #F5E0D0; color:var(--ink); }
+.pill b { color:var(--warm2); }
+.level-bar { display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap; align-items:center; }
+.lvl-badge { padding:6px 18px; border-radius:30px; font-size:13px; font-weight:700; border:2px solid #E0D0C0; color:#C0A898; background:white; transition:all 0.3s; cursor:default; }
+.lvl-badge.active { border-color:var(--warm1); color:var(--ink); background:#FFF8E8; box-shadow:0 0 0 3px rgba(245,166,35,0.2); }
+.lvl-badge.done   { border-color:var(--green); color:white; background:var(--green); }
+.lvl-badge.locked { opacity:0.4; }
+.threshold-note { font-size:11px; color:#C0A898; font-style:italic; }
+.mode-tabs { display:flex; gap:6px; margin-bottom:14px; background:white; padding:4px; border-radius:40px; width:fit-content; box-shadow:var(--sh); border:2px solid #F0E0D0; }
+.tab { padding:7px 18px; border-radius:30px; border:none; font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s; color:#C0A898; background:transparent; }
+.tab.active { background:linear-gradient(135deg,var(--warm1),var(--warm2)); color:white; box-shadow:0 3px 10px rgba(232,89,60,0.35); }
+.progress-bar { height:6px; background:#F0E0D0; border-radius:8px; margin-bottom:16px; overflow:hidden; }
+.progress-fill { height:100%; background:linear-gradient(90deg,var(--warm1),var(--warm2)); border-radius:8px; transition:width 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+.q-card { background:white; border-radius:var(--r); padding:18px 20px; box-shadow:var(--sh); margin-bottom:14px; text-align:center; border:2px solid #F0E0D0; }
+.q-num { font-size:11px; color:#C0A898; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px; }
+.q-sentence { font-size:clamp(15px,3.5vw,20px); line-height:1.8; font-family:'Lora',serif; }
+.q-pro  { font-weight:700; font-family:'Nunito',sans-serif; }
+.q-verb { color:var(--cool1); font-weight:700; font-family:'Nunito',sans-serif; }
+.q-blank { display:inline-block; border-bottom:2.5px solid #C0A898; min-width:96px; margin:0 5px; vertical-align:middle; padding-bottom:2px; line-height:1.5; font-family:'Nunito',sans-serif; font-weight:700; }
+.q-blank.correct      { border-color:var(--green); color:var(--green); }
+.q-blank.also-correct { border-color:var(--warm1); color:var(--warm1); }
+.q-blank.wrong        { border-color:var(--warm2); color:var(--warm2); }
+.q-context { color:#888; font-style:italic; }
+.face-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(88px,1fr)); gap:10px; margin-bottom:12px; }
+.face-btn { display:flex; flex-direction:column; align-items:center; gap:6px; background:white; border:2.5px solid #F0E0D0; border-radius:16px; padding:10px 6px 8px; cursor:pointer; transition:all 0.2s; box-shadow:0 2px 8px rgba(44,26,14,0.07); font-family:inherit; }
+.face-btn:hover:not(:disabled) { transform:translateY(-4px) scale(1.04); box-shadow:0 8px 22px rgba(44,26,14,0.14); border-color:var(--warm1); }
+.face-btn:disabled { cursor:default; }
+.face-btn svg { width:62px; height:70px; }
+.face-btn .lbl { font-size:9px; text-transform:uppercase; font-weight:900; color:#C0A898; letter-spacing:0.8px; }
+.face-btn.correct      { border-color:var(--green); background:#EEFAF3; transform:scale(1.08); box-shadow:0 0 0 3px rgba(58,170,106,0.2); }
+.face-btn.correct .lbl { color:var(--green); }
+.face-btn.also-correct { border-color:var(--warm1); background:#FFF8E8; transform:scale(1.05); box-shadow:0 0 0 3px rgba(245,166,35,0.2); }
+.face-btn.also-correct .lbl { color:var(--warm1); }
+.face-btn.wrong { border-color:var(--warm2); background:#FFF0EE; animation:shake 0.3s ease; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+.drag-zone { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; justify-content:center; }
+.drag-chip { padding:7px 16px; background:white; border:2px solid #F0E0D0; border-radius:30px; font-family:inherit; font-size:13px; font-weight:700; color:var(--ink); cursor:pointer; transition:all 0.15s; box-shadow:0 2px 7px rgba(44,26,14,0.07); }
+.drag-chip:hover { background:#FFF8F0; border-color:var(--warm1); transform:scale(1.05); }
+.drag-chip.used  { opacity:0.2; pointer-events:none; }
+.drag-chip.also-correct-chip { border-color:var(--warm1) !important; }
+.drop-target { display:inline-block; min-width:96px; height:28px; border-bottom:2.5px dashed #C0A898; margin:0 4px; vertical-align:bottom; text-align:center; line-height:28px; font-weight:700; font-size:14px; transition:all 0.15s; cursor:pointer; font-family:'Nunito',sans-serif; }
+.drop-target.drag-over    { border-color:var(--warm1); background:#FFF8F0; border-radius:6px; }
+.drop-target.correct      { border-color:var(--green); color:var(--green); border-style:solid; }
+.drop-target.also-correct { border-color:var(--warm1); color:var(--warm1); border-style:solid; }
+.drop-target.wrong        { border-color:var(--warm2); color:var(--warm2); border-style:solid; }
+.toast { position:fixed; top:18px; left:50%; transform:translateX(-50%) translateY(-90px); background:white; border-radius:30px; padding:11px 26px; font-size:15px; font-weight:700; box-shadow:0 8px 30px rgba(44,26,14,0.15); transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1); z-index:999; border:3px solid #eee; pointer-events:none; white-space:nowrap; }
+.toast.show { transform:translateX(-50%) translateY(0); }
+.toast.ok   { border-color:var(--green); color:var(--green); }
+.toast.also { border-color:var(--warm1); color:#C07800; }
+.toast.bad  { border-color:var(--warm2); color:var(--warm2); }
+.btn-next { display:none; background:linear-gradient(135deg,var(--warm1),var(--warm2)); color:white; border:none; border-radius:30px; padding:11px 28px; font-family:inherit; font-size:15px; font-weight:700; cursor:pointer; box-shadow:0 4px 14px rgba(232,89,60,0.35); margin:6px auto; transition:transform 0.15s; letter-spacing:0.3px; }
+.btn-next:hover { transform:scale(1.04); }
+.btn-next.visible { display:block; }
+.lvl-result { display:none; text-align:center; background:white; border-radius:var(--r); padding:30px 20px; box-shadow:var(--sh); border:2px solid #F0E0D0; }
+.lvl-result.show { display:block; }
+.res-emoji { font-size:58px; margin-bottom:8px; }
+.res-stars { font-size:32px; letter-spacing:5px; margin-bottom:8px; color:var(--warm1); }
+.res-title { font-size:24px; font-weight:900; color:var(--warm2); margin-bottom:6px; }
+.res-score { font-size:16px; color:#888; margin-bottom:20px; font-family:'Lora',serif; }
+.res-sub   { font-size:13px; color:#B0A098; margin-bottom:20px; font-style:italic; }
+.btn-row { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+.btn { border:none; border-radius:30px; padding:11px 26px; font-family:inherit; font-size:14px; font-weight:700; cursor:pointer; transition:transform 0.15s; box-shadow:0 3px 12px rgba(44,26,14,0.12); }
+.btn:hover { transform:scale(1.05); }
+.btn-retry    { background:linear-gradient(135deg,#F0E0D0,#E8C8B0); color:var(--ink); }
+.btn-next-lvl { background:linear-gradient(135deg,var(--warm1),var(--warm2)); color:white; }
+.btn-next-lvl:disabled { opacity:0.35; cursor:not-allowed; transform:none; }
+.trophy-screen { display:none; text-align:center; background:white; border-radius:var(--r); padding:36px 20px; box-shadow:var(--sh); border:3px solid var(--warm1); }
+.trophy-screen.show { display:block; }
+.trophy-emoji { font-size:76px; margin-bottom:10px; }
+.trophy-title { font-size:28px; font-weight:900; color:var(--warm2); margin-bottom:8px; }
+.trophy-score { font-size:16px; color:#888; margin-bottom:22px; font-family:'Lora',serif; }
+</style>
 </head>
 <body>
-<p class="p1"><span class="s1"><span class="Apple-converted-space"> </span>Feelings </span><span class="s2">Game</span></p>
-<p class="p2"><span class="s1">✓ </span><span class="s3">0</span></p>
-<p class="p2"><span class="s1">✗ </span><span class="s3">0</span></p>
-<p class="p2"><span class="s1">Q </span><span class="s3">1</span><span class="s1">/</span><span class="s3">6</span></p>
-<p class="p3"><span class="s1">★ Level 1</span></p>
-<p class="p4"><span class="s1">★★ Level 2 </span><span class="s4">🔒</span></p>
-<p class="p4"><span class="s1">★★★ Level 3 </span><span class="s4">🔒</span></p>
-<p class="p5"><span class="s1">80% to unlock the next level</span></p>
-<p class="p6"><span class="s5">👤</span><span class="s6"> Find the face</span></p>
-<p class="p7"><span class="s5">✏️</span><span class="s6"> Fill the gap</span></p>
-<p class="p8"><span class="s1"></span><br></p>
-<p class="p9"><span class="s6">QUESTION 1 / 6</span></p>
-<p class="p10"><span class="s1"></span><br></p>
-<p class="p11"><span class="s1"></span><br></p>
+
+<div class="topbar">
+  <div class="title">Feelings <span>Game</span></div>
+  <div class="score-box">
+    <div class="pill">✓ <b id="score-ok">0</b></div>
+    <div class="pill">✗ <b id="score-bad">0</b></div>
+    <div class="pill" id="pill-q">Q <b id="q-idx">1</b>/<b id="q-total">6</b></div>
+  </div>
+</div>
+
+<div class="level-bar">
+  <div class="lvl-badge active" id="badge-1">★ Level 1</div>
+  <div class="lvl-badge locked" id="badge-2">★★ Level 2 🔒</div>
+  <div class="lvl-badge locked" id="badge-3">★★★ Level 3 🔒</div>
+  <span class="threshold-note">80% to unlock the next level</span>
+</div>
+
+<div class="mode-tabs">
+  <button class="tab active" id="tab-a" onclick="switchMode('a')">👤 Find the face</button>
+  <button class="tab"        id="tab-b" onclick="switchMode('b')">✏️ Fill the gap</button>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+
+<div class="q-card" id="q-card">
+  <div class="q-num" id="q-num">Question 1 / 6</div>
+  <div class="q-sentence" id="q-sentence"></div>
+</div>
+
+<div class="face-grid" id="mode-a"></div>
+<div class="drag-zone"  id="mode-b" style="display:none"></div>
+<button class="btn-next" id="btn-next" onclick="nextQuestion()">Next ➜</button>
+
+<div class="lvl-result" id="lvl-result">
+  <div class="res-emoji" id="res-emoji"></div>
+  <div class="res-stars" id="res-stars"></div>
+  <div class="res-title" id="res-title"></div>
+  <div class="res-score" id="res-score"></div>
+  <div class="res-sub"   id="res-sub"></div>
+  <div class="btn-row">
+    <button class="btn btn-retry"    onclick="retryLevel()">Try again 🔄</button>
+    <button class="btn btn-next-lvl" id="btn-next-lvl" onclick="startNextLevel()">Next level ➜</button>
+  </div>
+</div>
+
+<div class="trophy-screen" id="trophy-screen">
+  <div class="trophy-emoji">🏆</div>
+  <div class="trophy-title">All levels done!</div>
+  <div class="trophy-score" id="trophy-score"></div>
+  <div class="btn-row" style="margin-top:18px;">
+    <button class="btn btn-retry" onclick="fullRestart()">Play again 🔄</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const FACES = {
+"happy":`<svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg"><rect x="33" y="74" width="14" height="12" rx="5" fill="#E8A96A"/><ellipse cx="40" cy="48" rx="30" ry="33" fill="#F2C07A"/><path d="M12,38 Q14,10 40,8 Q66,10 68,38 Q60,20 40,18 Q20,20 12,38Z" fill="#3D2008"/><ellipse cx="11" cy="52" rx="5" ry="7" fill="#E8A96A"/><ellipse cx="69" cy="52" rx="5" ry="7" fill="#E8A96A"/><ellipse cx="22" cy="58" rx="8" ry="5" fill="#F0875A" opacity="0.35"/><ellipse cx="58" cy="58" rx="8" ry="5" fill="#F0875A" opacity="0.35"/><path d="M24,46 Q30,38 36,46" fill="none" stroke="#2A1200" stroke-width="2.5" stroke-linecap="round"/><path d="M44,46 Q50,38 56,46" fill="none" stroke="#2A1200" stroke-width="2.5" stroke-linecap="round"/><path d="M37,58 Q40,62 43,58" fill="none" stroke="#C47840" stroke-width="1.5" stroke-linecap="round"/><path d="M24,66 Q40,80 56,66" fill="none" stroke="#2A1200" stroke-width="2.2" stroke-linecap="round"/><path d="M28,67 Q40,76 52,67" fill="white" stroke="none" opacity="0.7"/></svg>`,
+
+"sad":`<svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg"><rect x="33" y="74" width="14" height="12" rx="5" fill="#C8A080"/><ellipse cx="40" cy="48" rx="30" ry="33" fill="#DEB890"/><path d="M12,38 Q14,10 40,8 Q66,10 68,38 Q60,20 40,18 Q20,20 12,38Z" fill="#1A1008"/><ellipse cx="11" cy="52" rx="5" ry="7" fill="#C8A080"/><ellipse cx="69" cy="52" rx="5" ry="7" fill="#C8A080"/><ellipse cx="22" cy="58" rx="7" ry="4" fill="#88AADD" opacity="0.3"/><ellipse cx="58" cy="58" rx="7" ry="4" fill="#88AADD" opacity="0.3"/><path d="M22,40 Q28,44 34,40" fill="none" stroke="#2A1200" stroke-width="2" stroke-linecap="round"/><path d="M46,40 Q52,44 58,40" fill="none" stroke="#2A1200" stroke-width="2" stroke-linecap="round"/><ellipse cx="29" cy="50" rx="6" ry="7" fill="white"/><circle cx="29" cy="52" r="4" fill="#2A3A50"/><circle cx="30.5" cy="50.5" r="1.5" fill="white"/><ellipse cx="51" cy="50" rx="6" ry="7" fill="white"/><circle cx="51" cy="52" r="4" fill="#2A3A50"/><circle cx="52.5" cy="50.5" r="1.5" fill="white"/><path d="M23,48 Q29,44 35,48" fill="#DEB890" stroke="none"/><path d="M45,48 Q51,44 57,48" fill="#DEB890" stroke="none"/><ellipse cx="25" cy="60" rx="2" ry="4" fill="#AACCEE" opacity="0.8"/><ellipse cx="47" cy="61" rx="2" ry="4" fill="#AACCEE" opacity="0.8"/><path d="M37,58 Q40,62 43,58" fill="none" stroke="#A07850" stroke-width="1.5" stroke-linecap="round"/><path d="M26,70 Q40,63 54,70" fill="none" stroke="#2A1200" stroke-width="2.2" stroke-linecap="round"/></svg>`,
+
+"angry":`<svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg"><rect x="33" y="74" width="14" height="12" rx="5" fill="#D4906A"/><ellipse cx="40" cy="48" rx="30" ry="33" fill="#ECA870"/><ellipse cx="40" cy="48" rx="28" ry="30" fill="#F09060" opacity="0.25"/><path d="M12,38 Q14,10 40,8 Q66,10 68,38 Q60,20 40,18 Q20,20 12,38Z" fill="#2A1008"/><ellipse cx="11" cy="52" rx="5" ry="7" fill="#D4906A"/><ellipse cx="69" cy="52" rx="5" ry="7" fill="#D4906A"/><ellipse cx="20" cy="56" rx="9" ry="6" fill="#E02000" opacity="0.3"/><ellipse cx="60" cy="56" rx="9" ry="6" fill="#E02000" opacity="0.3"/><path d="M20,38 L34,46" fill="none" stroke="#2A0800" stroke-width="3" stroke-linecap="round"/><path d="M46,46 L60,38" fill="none" stroke="#2A0800" stroke-width="3" stroke-linecap="round"/><path d="M22,50 Q29,46 36,50" fill="none" stroke="#2A0800" stroke-width="2.5" stroke-linecap="round"/><path d="M44,50 Q51,46 58,50" fill="none" stroke="#2A0800" stroke-width="2.5" stroke-linecap="round"/><path d="M35,60 Q40,64 45,60" fill="none" stroke="#A05030" stroke-width="2" stroke-linecap="round"/><path d="M24,70 Q40,65 56,70" fill="none" stroke="#2A0800" stroke-width="2.2" stroke-linecap="round"/><line x1="29" y1="70" x2="29" y2="67" stroke="#2A0800" stroke-width="1.5"/><line x1="36" y1="68.5" x2="36" y2="66" stroke="#2A0800" stroke-width="1.5"/><line x1="44" y1="68.5" x2="44" y2="66" stroke="#2A0800" stroke-width="1.5"/><line x1="51" y1="70" x2="51" y2="67" stroke="#2A0800" stroke-width="1.5"/></svg>`,
+
+"scared":`<svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg"><rect x="33" y="74" width="14" height="12" rx="5" fill="#D4B090"/><ellipse cx="40" cy="48" rx="30" ry="33" fill="#EED8B8"/><ellipse cx="40" cy="48" rx="28" ry="30" fill="#EEE8FF" opacity="0.35"/><path d="M12,38 Q14,10 40,8 Q66,10 68,38" fill="#1A1020"/><polygon points="20,22 16,4 28,20" fill="#1A1020"/><polygon points="40,16 38,0 44,16" fill="#1A1020"/><polygon points="58,22 64,4 52,20" fill="#1A1020"/><ellipse cx="11" cy="52" rx="5" ry="7" fill="#D4B090"/><ellipse cx="69" cy="52" rx="5" ry="7" fill="#D4B090"/><ellipse cx="27" cy="50" rx="8" ry="9" fill="white"/><circle cx="27" cy="52" r="5" fill="#281840"/><circle cx="25" cy="50" r="2" fill="white"/><ellipse cx="53" cy="50" rx="8" ry="9" fill="white"/><circle cx="53" cy="52" r="5" fill="#281840"/><circle cx="51" cy="50" r="2" fill="white"/><path d="M18,36 Q26,28 34,36" fill="none" stroke="#281840" stroke-width="2" stroke-linecap="round"/><path d="M46,36 Q54,28 62,36" fill="none" stroke="#281840" stroke-width="2" stroke-linecap="round"/><path d="M37,60 Q40,64 43,60" fill="none" stroke="#B09070" stroke-width="1.5" stroke-linecap="round"/><path d="M26,70 Q30,75 34,70 Q38,75 42,70 Q46,75 50,70 Q54,75 58,70" fill="none" stroke="#281840" stroke-width="2" stroke-linecap="round"/></svg>`,
+
+"excited":`<svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg"><rect x="33" y="74" width="14" height="12" rx="5" fill="#D4906A"/><ellipse cx="40" cy="48" rx="30" ry="33" fill="#F2B07A"/><path d="M12,40 Q10,16 40,10 Q70,16 68,40 Q58,22 40,20 Q22,22 12,40Z" fill="#5A2808"/><path d="M14,36 Q20,28 26,32" fill="none" stroke="#5A2808" stroke-width="3" stroke-linecap="round"/><ellipse cx="11" cy="54" rx="5" ry="7" fill="#D4906A"/><ellipse cx="69" cy="54" rx="5" ry="7" fill="#D4906A"/><ellipse cx="20" cy="60" rx="9" ry="6" fill="#F06080" opacity="0.4"/><ellipse cx="60" cy="60" rx="9" ry="6" fill="#F06080" opacity="0.4"/><ellipse cx="28" cy="49" rx="8" ry="8" fill="white"/><ellipse cx="52" cy="49" rx="8" ry="8" fill="white"/><text x="28" y="53" font-size="11" text-anchor="middle" fill="#E03060" font-family="serif">★</text><text x="52" y="53" font-size="11" text-anchor="middle" fill="#E03060" font-family="serif">★</text><path d="M37,61 Q40,65 43,61" fill="none" stroke="#C07040" stroke-width="1.5" stroke-linecap="round"/><path d="M22,70 Q40,85 58,70" fill="#FF8899" stroke="#2A0812" stroke-width="2" stroke-linecap="round"/><path d="M28,71 Q40,80 52,71" fill="white" stroke="none"/><text x="8" y="44" font-size="10" fill="#FFD166" font-family="serif">✦</text><text x="64" y="38" font-size="8" fill="#FFD166" font-family="serif">✦</text></svg>`,
+
+"tired":`<svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg"><rect x="33" y="74" width="14" height="12" rx="5" fill="#B8A090"/><ellipse cx="40" cy="50" rx="30" ry="33" fill="#D8C0A8"/><path d="M12,40 Q14,12 40,10 Q66,12 68,40 Q60,22 40,20 Q20,22 12,40Z" fill="#2A1A0A"/><ellipse cx="11" cy="54" rx="5" ry="7" fill="#B8A090"/><ellipse cx="69" cy="54" rx="5" ry="7" fill="#B8A090"/><ellipse cx="28" cy="50" rx="7" ry="7" fill="white" opacity="0.8"/><ellipse cx="52" cy="50" rx="7" ry="7" fill="white" opacity="0.8"/><circle cx="28" cy="52" r="4" fill="#3A3030"/><circle cx="52" cy="52" r="4" fill="#3A3030"/><path d="M21,49 Q28,42 35,49" fill="#D8C0A8" stroke="none"/><path d="M45,49 Q52,42 59,49" fill="#D8C0A8" stroke="none"/><path d="M22,42 Q28,44 34,42" fill="none" stroke="#2A1A0A" stroke-width="1.8" stroke-linecap="round"/><path d="M46,42 Q52,44 58,42" fill="none" stroke="#2A1A0A" stroke-width="1.8" stroke-linecap="round"/><path d="M37,61 Q40,65 43,61" fill="none" stroke="#907060" stroke-width="1.5" stroke-linecap="round"/><path d="M30,70 Q40,67 50,70" fill="none" stroke="#2A1A0A" stroke-width="1.8" stroke-linecap="round"/><text x="62" y="36" font-size="9" fill="#BBBBCC" font-family="Georgia,serif" opacity="0.8">z</text><text x="67" y="26" font-size="12" fill="#BBBBCC" font-family="Georgia,serif" opacity="0.6">z</text><text x="72" y="16" font-size="14" fill="#BBBBCC" font-family="Georgia,serif" opacity="0.4">z</text></svg>`,
+
+"bored":`<svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg"><rect x="33" y="74" width="14" height="12" rx="5" fill="#C0B090"/><ellipse cx="40" cy="48" rx="30" ry="33" fill="#D8C898"/><path d="M12,38 Q14,10 40,8 Q66,10 68,38 Q60,20 40,18 Q20,20 12,38Z" fill="#4A3820"/><ellipse cx="11" cy="52" rx="5" ry="7" fill="#C0B090"/><ellipse cx="69" cy="52" rx="5" ry="7" fill="#C0B090"/><ellipse cx="28" cy="50" rx="7" ry="6" fill="white" opacity="0.9"/><ellipse cx="52" cy="50" rx="7" ry="6" fill="white" opacity="0.9"/><circle cx="30" cy="51" r="4" fill="#3A3020"/><circle cx="54" cy="51" r="4" fill="#3A3020"/><circle cx="31" cy="50" r="1.5" fill="white"/><circle cx="55" cy="50" r="1.5" fill="white"/><path d="M21,49 Q28,43 35,49" fill="#D8C898" stroke="none"/><path d="M45,49 Q52,43 59,49" fill="#D8C898" stroke="none"/><line x1="21" y1="40" x2="35" y2="40" stroke="#2A1800" stroke-width="2" stroke-linecap="round"/><line x1="45" y1="40" x2="59" y2="40" stroke="#2A1800" stroke-width="2" stroke-linecap="round"/><path d="M37,59 Q40,63 43,59" fill="none" stroke="#907840" stroke-width="1.5" stroke-linecap="round"/><path d="M26,68 Q40,69 54,66" fill="none" stroke="#2A1800" stroke-width="2" stroke-linecap="round"/></svg>`,
+
+"surprised":`<svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg"><rect x="33" y="74" width="14" height="12" rx="5" fill="#D4A870"/><ellipse cx="40" cy="50" rx="30" ry="33" fill="#F0C880"/><path d="M12,38 Q10,12 40,8 Q70,12 68,38 Q62,16 40,14 Q18,16 12,38Z" fill="#3A2010"/><polygon points="32,14 30,0 38,14" fill="#3A2010"/><polygon points="46,14 52,2 54,16" fill="#3A2010"/><polygon points="22,20 18,6 28,18" fill="#3A2010"/><ellipse cx="11" cy="54" rx="5" ry="7" fill="#D4A870"/><ellipse cx="69" cy="54" rx="5" ry="7" fill="#D4A870"/><ellipse cx="27" cy="50" rx="9" ry="10" fill="white"/><circle cx="27" cy="52" r="6" fill="#1A1000"/><circle cx="24.5" cy="49.5" r="2.5" fill="white"/><ellipse cx="53" cy="50" rx="9" ry="10" fill="white"/><circle cx="53" cy="52" r="6" fill="#1A1000"/><circle cx="50.5" cy="49.5" r="2.5" fill="white"/><path d="M18,32 Q27,24 36,32" fill="none" stroke="#2A1000" stroke-width="2.5" stroke-linecap="round"/><path d="M44,32 Q53,24 62,32" fill="none" stroke="#2A1000" stroke-width="2.5" stroke-linecap="round"/><path d="M37,62 Q40,66 43,62" fill="none" stroke="#B08040" stroke-width="1.5" stroke-linecap="round"/><ellipse cx="40" cy="73" rx="8" ry="7" fill="#CC8040" stroke="#2A1000" stroke-width="1.5"/><ellipse cx="40" cy="74" rx="6" ry="5" fill="#1A0800" opacity="0.7"/></svg>`,
+
+"lonely":`<svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg"><rect x="33" y="74" width="14" height="12" rx="5" fill="#B8B8C8"/><ellipse cx="40" cy="48" rx="30" ry="33" fill="#D0D0E0"/><path d="M12,38 Q14,10 40,8 Q66,10 68,38 Q60,20 40,18 Q20,20 12,38Z" fill="#2A2A3A"/><ellipse cx="11" cy="52" rx="5" ry="7" fill="#B8B8C8"/><ellipse cx="69" cy="52" rx="5" ry="7" fill="#B8B8C8"/><path d="M22,40 Q28,44 34,40" fill="none" stroke="#2A2A3A" stroke-width="2" stroke-linecap="round"/><path d="M46,40 Q52,44 58,40" fill="none" stroke="#2A2A3A" stroke-width="2" stroke-linecap="round"/><ellipse cx="29" cy="50" rx="6" ry="7" fill="white"/><circle cx="29" cy="52" r="4" fill="#3A3A5A"/><circle cx="27.5" cy="50" r="1.5" fill="white"/><ellipse cx="51" cy="50" rx="6" ry="7" fill="white"/><circle cx="51" cy="52" r="4" fill="#3A3A5A"/><circle cx="49.5" cy="50" r="1.5" fill="white"/><ellipse cx="25" cy="60" rx="2" ry="4" fill="#8888CC" opacity="0.6"/><ellipse cx="47" cy="61" rx="2" ry="4" fill="#8888CC" opacity="0.6"/><path d="M37,60 Q40,64 43,60" fill="none" stroke="#8888AA" stroke-width="1.5" stroke-linecap="round"/><path d="M26,70 Q40,63 54,70" fill="none" stroke="#2A2A3A" stroke-width="2.2" stroke-linecap="round"/><path d="M33,8 Q40,3 47,8 Q44,15 40,12 Q36,15 33,8Z" fill="none" stroke="#8888CC" stroke-width="1.5" opacity="0.6"/></svg>`,
+
+"proud":`<svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg"><rect x="33" y="74" width="14" height="12" rx="5" fill="#D4A050"/><ellipse cx="40" cy="48" rx="30" ry="33" fill="#EEC070"/><path d="M12,38 Q14,10 40,8 Q66,10 68,38 Q60,20 40,18 Q20,20 12,38Z" fill="#3A2000"/><ellipse cx="11" cy="52" rx="5" ry="7" fill="#D4A050"/><ellipse cx="69" cy="52" rx="5" ry="7" fill="#D4A050"/><ellipse cx="22" cy="58" rx="7" ry="4" fill="#F0A030" opacity="0.35"/><ellipse cx="58" cy="58" rx="7" ry="4" fill="#F0A030" opacity="0.35"/><path d="M17,36 Q22,31 27,36" fill="none" stroke="#3A2000" stroke-width="2.5" stroke-linecap="round"/><path d="M53,36 Q58,31 63,36" fill="none" stroke="#3A2000" stroke-width="2.5" stroke-linecap="round"/><ellipse cx="28" cy="49" rx="7" ry="7" fill="white"/><ellipse cx="52" cy="49" rx="7" ry="7" fill="white"/><circle cx="28" cy="51" r="4" fill="#2A1800"/><circle cx="52" cy="51" r="4" fill="#2A1800"/><circle cx="26.5" cy="49" r="1.8" fill="white"/><circle cx="50.5" cy="49" r="1.8" fill="white"/><path d="M21,48 Q28,44 35,48" fill="#EEC070" stroke="none"/><path d="M45,48 Q52,44 59,48" fill="#EEC070" stroke="none"/><path d="M37,59 Q40,63 43,59" fill="none" stroke="#C08030" stroke-width="1.5" stroke-linecap="round"/><path d="M24,67 Q40,78 56,67" fill="none" stroke="#2A1800" stroke-width="2.2" stroke-linecap="round"/><polygon points="27,10 30,2 33,10 30,8Z" fill="#FFD700" stroke="#E8A000" stroke-width="1"/><polygon points="33,7 40,1 47,7" fill="#FFD700" stroke="#E8A000" stroke-width="1"/><polygon points="47,10 50,2 53,10 50,8Z" fill="#FFD700" stroke="#E8A000" stroke-width="1"/><rect x="27" y="10" width="26" height="4" rx="2" fill="#FFD700" stroke="#E8A000" stroke-width="1"/></svg>`,
+
+"confused":`<svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg"><rect x="33" y="74" width="14" height="12" rx="5" fill="#C8A0C0"/><ellipse cx="40" cy="48" rx="30" ry="33" fill="#E0C0D8"/><path d="M12,38 Q14,10 40,8 Q66,10 68,38 Q60,20 40,18 Q20,20 12,38Z" fill="#2A1030"/><ellipse cx="11" cy="52" rx="5" ry="7" fill="#C8A0C0"/><ellipse cx="69" cy="52" rx="5" ry="7" fill="#C8A0C0"/><path d="M20,38 L34,43" fill="none" stroke="#2A1030" stroke-width="2.2" stroke-linecap="round"/><line x1="45" y1="40" x2="59" y2="40" stroke="#2A1030" stroke-width="2.2" stroke-linecap="round"/><ellipse cx="27" cy="50" rx="8" ry="9" fill="white"/><circle cx="27" cy="52" r="5" fill="#2A1030"/><circle cx="25" cy="50" r="2" fill="white"/><path d="M44,50 Q51,46 58,50" fill="none" stroke="#2A1030" stroke-width="2.5" stroke-linecap="round"/><path d="M44,50 L58,50" fill="none" stroke="#2A1030" stroke-width="1.5"/><path d="M37,60 Q40,64 43,60" fill="none" stroke="#A070A0" stroke-width="1.5" stroke-linecap="round"/><path d="M26,70 Q30,76 34,70 Q38,76 42,70 Q46,75 50,70" fill="none" stroke="#2A1030" stroke-width="2" stroke-linecap="round"/><text x="56" y="20" font-size="14" fill="#9060A0" font-family="Georgia,serif" font-weight="bold">?</text></svg>`,
+
+"calm":`<svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg"><rect x="33" y="74" width="14" height="12" rx="5" fill="#A8C0A8"/><ellipse cx="40" cy="48" rx="30" ry="33" fill="#C8DCC8"/><path d="M12,38 Q14,10 40,8 Q66,10 68,38 Q60,20 40,18 Q20,20 12,38Z" fill="#1A2A1A"/><ellipse cx="11" cy="52" rx="5" ry="7" fill="#A8C0A8"/><ellipse cx="69" cy="52" rx="5" ry="7" fill="#A8C0A8"/><ellipse cx="22" cy="56" rx="7" ry="4" fill="#70AA70" opacity="0.25"/><ellipse cx="58" cy="56" rx="7" ry="4" fill="#70AA70" opacity="0.25"/><path d="M22,44 Q28,40 34,44" fill="none" stroke="#1A2A1A" stroke-width="2" stroke-linecap="round"/><path d="M46,44 Q52,40 58,44" fill="none" stroke="#1A2A1A" stroke-width="2" stroke-linecap="round"/><ellipse cx="28" cy="50" rx="7" ry="7" fill="white"/><ellipse cx="52" cy="50" rx="7" ry="7" fill="white"/><circle cx="28" cy="52" r="4" fill="#2A402A"/><circle cx="52" cy="52" r="4" fill="#2A402A"/><path d="M21,48 Q28,44 35,48" fill="#C8DCC8" opacity="0.7" stroke="none"/><path d="M45,48 Q52,44 59,48" fill="#C8DCC8" opacity="0.7" stroke="none"/><circle cx="29.5" cy="50" r="1.5" fill="white"/><circle cx="53.5" cy="50" r="1.5" fill="white"/><path d="M37,60 Q40,64 43,60" fill="none" stroke="#608060" stroke-width="1.5" stroke-linecap="round"/><path d="M27,68 Q40,76 53,68" fill="none" stroke="#1A2A1A" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="10" r="4" fill="#A8D8A8" opacity="0.6"/><circle cx="20" cy="5" r="5" fill="#A8D8A8" opacity="0.6"/><circle cx="29" cy="8" r="4" fill="#A8D8A8" opacity="0.6"/></svg>`,
+
+"nervous":`<svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg"><rect x="33" y="74" width="14" height="12" rx="5" fill="#B8B0D0"/><ellipse cx="40" cy="48" rx="30" ry="33" fill="#D0C8E8"/><path d="M12,38 Q14,10 40,8 Q66,10 68,38 Q60,20 40,18 Q20,20 12,38Z" fill="#1A1830"/><ellipse cx="11" cy="52" rx="5" ry="7" fill="#B8B0D0"/><ellipse cx="69" cy="52" rx="5" ry="7" fill="#B8B0D0"/><ellipse cx="29" cy="50" rx="7" ry="7.5" fill="white"/><ellipse cx="51" cy="50" rx="7" ry="7.5" fill="white"/><circle cx="31" cy="51" r="4.5" fill="#1A1830"/><circle cx="53" cy="51" r="4.5" fill="#1A1830"/><circle cx="29.5" cy="49" r="1.8" fill="white"/><circle cx="51.5" cy="49" r="1.8" fill="white"/><path d="M22,42 Q28,46 34,42" fill="none" stroke="#1A1830" stroke-width="2" stroke-linecap="round"/><path d="M46,42 Q52,46 58,42" fill="none" stroke="#1A1830" stroke-width="2" stroke-linecap="round"/><path d="M37,60 Q40,64 43,60" fill="none" stroke="#8878B0" stroke-width="1.5" stroke-linecap="round"/><path d="M24,69 Q30,74 36,69 Q40,73 44,69 Q50,74 56,69" fill="none" stroke="#1A1830" stroke-width="2" stroke-linecap="round"/><path d="M60,18 Q63,12 66,18 Q66,23 63,23 Q60,23 60,18Z" fill="#A8D0E8" stroke="#80A8C8" stroke-width="1"/><path d="M66,26 Q68,22 70,26 Q70,29 68,29 Q66,29 66,26Z" fill="#A8D0E8" stroke="#80A8C8" stroke-width="1"/></svg>`,
+
+"worried":`<svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg"><rect x="33" y="74" width="14" height="12" rx="5" fill="#C8B090"/><ellipse cx="40" cy="48" rx="30" ry="33" fill="#E0C8A0"/><path d="M12,38 Q14,10 40,8 Q66,10 68,38 Q60,20 40,18 Q20,20 12,38Z" fill="#3A2808"/><ellipse cx="11" cy="52" rx="5" ry="7" fill="#C8B090"/><ellipse cx="69" cy="52" rx="5" ry="7" fill="#C8B090"/><path d="M19,38 L28,43" fill="none" stroke="#3A2808" stroke-width="2.2" stroke-linecap="round"/><path d="M52,43 L61,38" fill="none" stroke="#3A2808" stroke-width="2.2" stroke-linecap="round"/><ellipse cx="28" cy="50" rx="6" ry="7" fill="white"/><circle cx="28" cy="52" r="3.5" fill="#2A1800"/><circle cx="26.5" cy="50" r="1.3" fill="white"/><ellipse cx="52" cy="50" rx="6" ry="7" fill="white"/><circle cx="52" cy="52" r="3.5" fill="#2A1800"/><circle cx="50.5" cy="50" r="1.3" fill="white"/><path d="M37,60 Q40,64 43,60" fill="none" stroke="#A08050" stroke-width="1.5" stroke-linecap="round"/><path d="M24,68 Q28,73 32,68 Q36,73 40,68 Q44,73 48,68 Q52,73 56,68" fill="none" stroke="#3A2808" stroke-width="2" stroke-linecap="round"/><path d="M60,12 Q63,6 66,12 Q66,17 63,17 Q60,17 60,12Z" fill="#A8D0E8" stroke="#78A8C8" stroke-width="1"/></svg>`,
+
+"embarrassed":`<svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg"><rect x="33" y="74" width="14" height="12" rx="5" fill="#D4A0A0"/><ellipse cx="40" cy="48" rx="30" ry="33" fill="#EEC0B0"/><ellipse cx="40" cy="52" rx="26" ry="26" fill="#F09090" opacity="0.18"/><path d="M12,38 Q14,10 40,8 Q66,10 68,38 Q60,20 40,18 Q20,20 12,38Z" fill="#2A1010"/><ellipse cx="11" cy="52" rx="5" ry="7" fill="#D4A0A0"/><ellipse cx="69" cy="52" rx="5" ry="7" fill="#D4A0A0"/><ellipse cx="18" cy="57" rx="10" ry="6" fill="#FF7070" opacity="0.5"/><ellipse cx="62" cy="57" rx="10" ry="6" fill="#FF7070" opacity="0.5"/><ellipse cx="28" cy="48" rx="6" ry="7" fill="white"/><ellipse cx="52" cy="48" rx="6" ry="7" fill="white"/><circle cx="28" cy="51" r="3.5" fill="#2A1010"/><circle cx="52" cy="51" r="3.5" fill="#2A1010"/><circle cx="26.5" cy="49" r="1.3" fill="white"/><circle cx="50.5" cy="49" r="1.3" fill="white"/><path d="M22,46 Q28,42 34,46" fill="#EEC0B0" stroke="none"/><path d="M46,46 Q52,42 58,46" fill="#EEC0B0" stroke="none"/><path d="M37,59 Q40,63 43,59" fill="none" stroke="#C07070" stroke-width="1.5" stroke-linecap="round"/><path d="M27,68 Q40,76 53,68" fill="none" stroke="#2A1010" stroke-width="2" stroke-linecap="round"/><path d="M26,8 Q28,4 30,8" fill="none" stroke="#E08080" stroke-width="1.5" stroke-linecap="round"/><path d="M34,6 Q36,2 38,6" fill="none" stroke="#E08080" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+
+"relieved":`<svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg"><rect x="33" y="74" width="14" height="12" rx="5" fill="#A8C8A0"/><ellipse cx="40" cy="48" rx="30" ry="33" fill="#C0DCA8"/><path d="M12,38 Q14,10 40,8 Q66,10 68,38 Q60,20 40,18 Q20,20 12,38Z" fill="#1A2A10"/><ellipse cx="11" cy="52" rx="5" ry="7" fill="#A8C8A0"/><ellipse cx="69" cy="52" rx="5" ry="7" fill="#A8C8A0"/><ellipse cx="22" cy="58" rx="7" ry="4" fill="#60B060" opacity="0.3"/><ellipse cx="58" cy="58" rx="7" ry="4" fill="#60B060" opacity="0.3"/><path d="M24,44 Q30,38 36,44" fill="none" stroke="#2A1200" stroke-width="2.2" stroke-linecap="round"/><path d="M44,44 Q50,38 56,44" fill="none" stroke="#2A1200" stroke-width="2.2" stroke-linecap="round"/><path d="M37,58 Q40,62 43,58" fill="none" stroke="#609060" stroke-width="1.5" stroke-linecap="round"/><path d="M25,68 Q40,78 55,68" fill="none" stroke="#1A2A10" stroke-width="2.2" stroke-linecap="round"/><path d="M50,12 Q55,7 60,10 Q62,15 58,18" fill="none" stroke="#80C080" stroke-width="2" stroke-dasharray="2,2" stroke-linecap="round"/></svg>`,
+
+"hopeful":`<svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg"><rect x="33" y="74" width="14" height="12" rx="5" fill="#D4A850"/><ellipse cx="40" cy="48" rx="30" ry="33" fill="#EEC878"/><path d="M12,38 Q14,10 40,8 Q66,10 68,38 Q60,20 40,18 Q20,20 12,38Z" fill="#3A2800"/><ellipse cx="11" cy="52" rx="5" ry="7" fill="#D4A850"/><ellipse cx="69" cy="52" rx="5" ry="7" fill="#D4A850"/><ellipse cx="22" cy="58" rx="7" ry="4" fill="#F0B030" opacity="0.3"/><ellipse cx="58" cy="58" rx="7" ry="4" fill="#F0B030" opacity="0.3"/><ellipse cx="28" cy="48" rx="7" ry="8" fill="white"/><ellipse cx="52" cy="48" rx="7" ry="8" fill="white"/><circle cx="28" cy="46" r="4.5" fill="#1A1000"/><circle cx="52" cy="46" r="4.5" fill="#1A1000"/><circle cx="26.5" cy="44.5" r="1.8" fill="white"/><circle cx="50.5" cy="44.5" r="1.8" fill="white"/><path d="M22,42 Q28,38 34,42" fill="none" stroke="#3A2800" stroke-width="2" stroke-linecap="round"/><path d="M46,42 Q52,38 58,42" fill="none" stroke="#3A2800" stroke-width="2" stroke-linecap="round"/><path d="M37,60 Q40,64 43,60" fill="none" stroke="#C09030" stroke-width="1.5" stroke-linecap="round"/><path d="M26,68 Q40,78 54,68" fill="none" stroke="#1A1000" stroke-width="2.2" stroke-linecap="round"/><text x="24" y="9" font-size="8" fill="#F0C030" font-family="serif">★</text><text x="37" y="5" font-size="10" fill="#F0C030" font-family="serif">★</text><text x="50" y="8" font-size="7" fill="#F0C030" font-family="serif">★</text></svg>`,
+
+"hungry":`<svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg"><rect x="33" y="74" width="14" height="12" rx="5" fill="#D4A870"/><ellipse cx="40" cy="48" rx="30" ry="33" fill="#F0C888"/><path d="M12,38 Q14,10 40,8 Q66,10 68,38 Q60,20 40,18 Q20,20 12,38Z" fill="#3A2008"/><ellipse cx="11" cy="52" rx="5" ry="7" fill="#D4A870"/><ellipse cx="69" cy="52" rx="5" ry="7" fill="#D4A870"/><ellipse cx="22" cy="58" rx="8" ry="5" fill="#F0A040" opacity="0.35"/><ellipse cx="58" cy="58" rx="8" ry="5" fill="#F0A040" opacity="0.35"/><ellipse cx="28" cy="48" rx="7" ry="8" fill="white"/><circle cx="28" cy="50" r="4.5" fill="#1A1000"/><circle cx="26" cy="48" r="2" fill="white"/><ellipse cx="52" cy="48" rx="7" ry="8" fill="white"/><circle cx="52" cy="50" r="4.5" fill="#1A1000"/><circle cx="50" cy="48" r="2" fill="white"/><path d="M22,42 Q28,38 34,42" fill="none" stroke="#3A2008" stroke-width="2" stroke-linecap="round"/><path d="M46,42 Q52,38 58,42" fill="none" stroke="#3A2008" stroke-width="2" stroke-linecap="round"/><path d="M37,60 Q40,64 43,60" fill="none" stroke="#C08040" stroke-width="1.5" stroke-linecap="round"/><path d="M24,68 Q40,80 56,68" fill="#FF9070" stroke="#2A1000" stroke-width="2" stroke-linecap="round"/><path d="M30,69 Q40,77 50,69" fill="white" stroke="none"/><path d="M44,76 Q40,82 36,76" fill="#FF8060" stroke="none"/></svg>`
+};
+
+const SENTENCE_POOL = [
+  {"adj":"happy","also":["excited"],"level":1,"pronoun":"I","verb":"am","context":"🎂 It is my birthday!"},
+  {"adj":"happy","also":["excited"],"level":1,"pronoun":"She","verb":"is","context":"😁 She is smiling a lot."},
+  {"adj":"happy","also":["excited"],"level":1,"pronoun":"He","verb":"is","context":"🌈 It is a sunny day!"},
+  {"adj":"sad","also":["worried"],"level":1,"pronoun":"She","verb":"is","context":"🐱 Her cat is gone."},
+  {"adj":"sad","also":["worried"],"level":1,"pronoun":"He","verb":"is","context":"🍬 He has no sweets left."},
+  {"adj":"sad","also":["worried"],"level":1,"pronoun":"I","verb":"am","context":"⛈️ It is a very bad day."},
+  {"adj":"angry","also":[],"level":1,"pronoun":"He","verb":"is","context":"😠 His toy is broken!"},
+  {"adj":"angry","also":[],"level":1,"pronoun":"She","verb":"is","context":"😤 She did not get a turn!"},
+  {"adj":"angry","also":[],"level":1,"pronoun":"I","verb":"am","context":"👊 It is not fair!"},
+  {"adj":"scared","also":[],"level":1,"pronoun":"I","verb":"am","context":"🐕 The dog is very big!"},
+  {"adj":"scared","also":[],"level":1,"pronoun":"She","verb":"is","context":"🕷️ She sees a big spider!"},
+  {"adj":"scared","also":[],"level":1,"pronoun":"He","verb":"is","context":"⚡ There is a big storm!"},
+  {"adj":"tired","also":[],"level":1,"pronoun":"She","verb":"is","context":"🌙 It is very late at night."},
+  {"adj":"tired","also":[],"level":1,"pronoun":"I","verb":"am","context":"😪 I need to sleep now."},
+  {"adj":"tired","also":[],"level":1,"pronoun":"He","verb":"is","context":"🥵 He ran all day long."},
+  {"adj":"excited","also":["happy"],"level":1,"pronoun":"He","verb":"is","context":"🎡 He goes to the park tomorrow!"},
+  {"adj":"excited","also":["happy"],"level":1,"pronoun":"She","verb":"is","context":"🎄 Christmas is tomorrow!"},
+  {"adj":"excited","also":["happy"],"level":1,"pronoun":"I","verb":"am","context":"✈️ We go on a trip today!"},
+  {"adj":"bored","also":[],"level":2,"pronoun":"I","verb":"am","context":"😑 Nothing to do today."},
+  {"adj":"bored","also":[],"level":2,"pronoun":"He","verb":"is","context":"🌧️ Rain again. No games."},
+  {"adj":"bored","also":[],"level":2,"pronoun":"She","verb":"is","context":"🔁 Same thing every day."},
+  {"adj":"surprised","also":["excited","happy"],"level":2,"pronoun":"She","verb":"is","context":"🚪 Friends are at the door!"},
+  {"adj":"surprised","also":["excited","happy"],"level":2,"pronoun":"He","verb":"is","context":"🎁 A gift — he did not know!"},
+  {"adj":"surprised","also":["excited","happy"],"level":2,"pronoun":"I","verb":"am","context":"😮 I did not see that!"},
+  {"adj":"lonely","also":["sad"],"level":2,"pronoun":"He","verb":"is","context":"👋 No friends today."},
+  {"adj":"lonely","also":["sad"],"level":2,"pronoun":"She","verb":"feels","context":"🏃 Nobody plays with her."},
+  {"adj":"lonely","also":["sad"],"level":2,"pronoun":"I","verb":"feel","context":"🏠 I am home alone."},
+  {"adj":"proud","also":["happy"],"level":2,"pronoun":"I","verb":"am","context":"🏆 I won the contest!"},
+  {"adj":"proud","also":["happy"],"level":2,"pronoun":"She","verb":"is","context":"🥇 She got first place!"},
+  {"adj":"proud","also":["happy"],"level":2,"pronoun":"He","verb":"feels","context":"🤝 He helped his friend."},
+  {"adj":"worried","also":["sad"],"level":2,"pronoun":"She","verb":"is","context":"😟 Her friend is not well."},
+  {"adj":"worried","also":["sad"],"level":2,"pronoun":"I","verb":"am","context":"🐈 My cat is not home yet."},
+  {"adj":"worried","also":["sad"],"level":2,"pronoun":"He","verb":"is","context":"🎒 His bag is lost."},
+  {"adj":"confused","also":[],"level":2,"pronoun":"He","verb":"is","context":"🌀 He does not understand."},
+  {"adj":"confused","also":[],"level":2,"pronoun":"She","verb":"feels","context":"🗺️ The map is very hard."},
+  {"adj":"confused","also":[],"level":2,"pronoun":"I","verb":"feel","context":"🤔 I do not know the answer."},
+  {"adj":"embarrassed","also":[],"level":3,"pronoun":"We","verb":"are","context":"📚 We forgot our homework."},
+  {"adj":"embarrassed","also":[],"level":3,"pronoun":"He","verb":"is","context":"💥 He fell in front of everyone!"},
+  {"adj":"embarrassed","also":[],"level":3,"pronoun":"She","verb":"is","context":"👀 Everyone looks at her."},
+  {"adj":"calm","also":[],"level":3,"pronoun":"They","verb":"are","context":"🧘 They breathe slowly."},
+  {"adj":"calm","also":[],"level":3,"pronoun":"She","verb":"feels","context":"📖 She reads in her room."},
+  {"adj":"calm","also":[],"level":3,"pronoun":"I","verb":"feel","context":"🎵 I listen to soft music."},
+  {"adj":"nervous","also":["scared","worried"],"level":3,"pronoun":"I","verb":"feel","context":"🎤 I speak in front of the class."},
+  {"adj":"nervous","also":["scared","worried"],"level":3,"pronoun":"She","verb":"is","context":"🏫 It is her first day at school."},
+  {"adj":"nervous","also":["scared","worried"],"level":3,"pronoun":"He","verb":"feels","context":"🎭 He acts in the school play."},
+  {"adj":"relieved","also":["happy"],"level":3,"pronoun":"She","verb":"feels","context":"😮‍💨 The test is finally over!"},
+  {"adj":"relieved","also":["happy"],"level":3,"pronoun":"I","verb":"am","context":"🔍 I found my lost pen!"},
+  {"adj":"relieved","also":["happy"],"level":3,"pronoun":"He","verb":"is","context":"🩺 The doctor says all is fine."},
+  {"adj":"hopeful","also":["excited"],"level":3,"pronoun":"He","verb":"feels","context":"🌟 He waits for good news."},
+  {"adj":"hopeful","also":["excited"],"level":3,"pronoun":"She","verb":"is","context":"🎅 She waits for Santa."},
+  {"adj":"hopeful","also":["excited"],"level":3,"pronoun":"I","verb":"feel","context":"🌅 Tomorrow will be better."},
+  {"adj":"hungry","also":[],"level":3,"pronoun":"I","verb":"am","context":"🍽️ It is lunch time!"},
+  {"adj":"hungry","also":[],"level":3,"pronoun":"He","verb":"is","context":"🥐 No breakfast this morning."},
+  {"adj":"hungry","also":[],"level":3,"pronoun":"We","verb":"are","context":"🍕 We want pizza now!"}
+];
+
+const THRESHOLD=0.8;
+const LEVEL_ADJS={
+  1:[...new Set(SENTENCE_POOL.filter(s=>s.level===1).map(s=>s.adj))],
+  2:[...new Set(SENTENCE_POOL.filter(s=>s.level<=2).map(s=>s.adj))],
+  3:[...new Set(SENTENCE_POOL.map(s=>s.adj))],
+};
+
+function buildLevelSentences(lvl){
+  return LEVEL_ADJS[lvl].map(adj=>{
+    const v=SENTENCE_POOL.filter(s=>s.adj===adj&&s.level<=lvl);
+    return v[Math.floor(Math.random()*v.length)];
+  });
+}
+
+const unlocked={1:true,2:false,3:false};
+let mode='a',curLevel=1,order=[],qIdx=0,scoreOk=0,scoreBad=0,answered=false,dragWord=null;
+let curSentences=[],curWords=[];
+
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function updateBadges(){
+  for(let l=1;l<=3;l++){
+    const b=document.getElementById(`badge-${l}`);
+    b.className='lvl-badge';
+    if(l===curLevel) b.classList.add('active');
+    else if(unlocked[l]) b.classList.add('done');
+    else b.classList.add('locked');
+  }
+}
+
+function startLevel(lvl){
+  curLevel=lvl;scoreOk=scoreBad=0;qIdx=0;answered=false;
+  curSentences=buildLevelSentences(lvl);curWords=LEVEL_ADJS[lvl];
+  order=shuffle([...Array(curSentences.length).keys()]);
+  document.getElementById('score-ok').textContent=0;
+  document.getElementById('score-bad').textContent=0;
+  document.getElementById('q-total').textContent=curSentences.length;
+  document.getElementById('lvl-result').classList.remove('show');
+  document.getElementById('trophy-screen').classList.remove('show');
+  document.getElementById('q-card').style.display='';
+  document.getElementById('pill-q').style.display='';
+  document.getElementById('progress').style.width='0%';
+  updateBadges();renderQuestion();
+}
+
+function retryLevel(){startLevel(curLevel);}
+function startNextLevel(){startLevel(curLevel+1);}
+function fullRestart(){unlocked[2]=false;unlocked[3]=false;startLevel(1);}
+function switchMode(m){mode=m;document.getElementById('tab-a').classList.toggle('active',m==='a');document.getElementById('tab-b').classList.toggle('active',m==='b');startLevel(curLevel);}
+
+function renderQuestion(){
+  answered=false;
+  document.getElementById('btn-next').classList.remove('visible');
+  const total=curSentences.length,s=curSentences[order[qIdx]];
+  document.getElementById('q-num').textContent=`Question ${qIdx+1} / ${total}`;
+  document.getElementById('q-idx').textContent=qIdx+1;
+  document.getElementById('progress').style.width=`${(qIdx/total)*100}%`;
+  if(mode==='a') renderModeA(s); else renderModeB(s);
+}
+
+function sentenceHTML(s,blankTag){
+  return `<span class="q-pro">${s.pronoun}</span> <span class="q-verb">${s.verb}</span> ${blankTag} <span class="q-context">${s.context}</span>`;
+}
+
+function renderModeA(s){
+  document.getElementById('mode-a').style.display='';
+  document.getElementById('mode-b').style.display='none';
+  document.getElementById('q-sentence').innerHTML=sentenceHTML(s,'<span class="q-blank" id="the-blank">___</span>');
+  const names=shuffle([...curWords]);
+  const grid=document.getElementById('mode-a');
+  grid.innerHTML='';
+  names.forEach(name=>{
+    const btn=document.createElement('button');
+    btn.className='face-btn';
+    btn.innerHTML=(FACES[name]||`<svg viewBox="0 0 80 90" width="62" height="70"></svg>`)+`<span class="lbl">${name}</span>`;
+    btn.dataset.name=name;
+    btn.onclick=()=>handleFaceClick(name,s.adj,btn);
+    grid.appendChild(btn);
+  });
+}
+
+function handleFaceClick(chosen,correct,btn){
+  if(answered)return;answered=true;
+  const s=curSentences[order[qIdx]],also=s.also||[];
+  const blank=document.getElementById('the-blank');
+  document.querySelectorAll('.face-btn').forEach(b=>b.disabled=true);
+  document.querySelectorAll('.face-btn').forEach(b=>{if(b.dataset.name===correct)b.classList.add('correct');});
+  document.querySelectorAll('.face-btn').forEach(b=>{if(also.includes(b.dataset.name))b.classList.add('also-correct');});
+  if(chosen===correct){blank.textContent=correct;blank.classList.add('correct');scoreOk++;document.getElementById('score-ok').textContent=scoreOk;showToast('✓ Well done!','ok');}
+  else if(also.includes(chosen)){blank.textContent=chosen;blank.classList.add('also-correct');scoreOk++;document.getElementById('score-ok').textContent=scoreOk;showToast(`✓ Also correct! Best: ${correct}`,'also',true);}
+  else{btn.classList.add('wrong');blank.textContent=chosen;blank.classList.add('wrong');scoreBad++;document.getElementById('score-bad').textContent=scoreBad;const hint=also.length?` (also: ${also.join(', ')})`:'';showToast(`✗ It was: ${correct}${hint}`,'bad');}
+  document.getElementById('btn-next').classList.add('visible');
+  document.getElementById('btn-next').textContent=qIdx+1>=curSentences.length?'See results 🏆':'Next ➜';
+}
+
+function renderModeB(s){
+  document.getElementById('mode-a').style.display='none';
+  document.getElementById('mode-b').style.display='';
+  document.getElementById('q-sentence').innerHTML=sentenceHTML(s,'<span class="drop-target" id="the-drop" ondragover="dragOver(event)" ondrop="dropWord(event)"></span>');
+  const words=shuffle([...curWords]);
+  const zone=document.getElementById('mode-b');zone.innerHTML='';
+  words.forEach(w=>{
+    const chip=document.createElement('div');
+    chip.className='drag-chip';chip.textContent=w;chip.dataset.word=w;chip.draggable=true;
+    chip.ondragstart=()=>{dragWord=w;chip.classList.add('dragging');};
+    chip.ondragend=()=>chip.classList.remove('dragging');
+    chip.onclick=()=>handleChipClick(w,s.adj);
+    zone.appendChild(chip);
+  });
+}
+
+function dragOver(e){e.preventDefault();document.getElementById('the-drop').classList.add('drag-over');}
+function dropWord(e){e.preventDefault();if(answered)return;handleChipClick(dragWord,curSentences[order[qIdx]].adj);}
+
+function handleChipClick(chosen,correct){
+  if(answered)return;answered=true;
+  const s=curSentences[order[qIdx]],also=s.also||[];
+  const drop=document.getElementById('the-drop');
+  drop.classList.remove('drag-over');drop.textContent=chosen;
+  document.querySelectorAll('.drag-chip').forEach(c=>{
+    c.style.pointerEvents='none';
+    if(c.dataset.word===correct)c.style.borderColor='var(--green)';
+    if(also.includes(c.dataset.word))c.classList.add('also-correct-chip');
+    if(c.dataset.word===chosen)c.classList.add('used');
+  });
+  if(chosen===correct){drop.classList.add('correct');scoreOk++;document.getElementById('score-ok').textContent=scoreOk;showToast('✓ Well done!','ok');}
+  else if(also.includes(chosen)){drop.classList.add('also-correct');scoreOk++;document.getElementById('score-ok').textContent=scoreOk;showToast(`✓ Also correct! Best: ${correct}`,'also',true);}
+  else{drop.classList.add('wrong');scoreBad++;document.getElementById('score-bad').textContent=scoreBad;const hint=also.length?` (also: ${also.join(', ')})`:'';showToast(`✗ It was: ${correct}${hint}`,'bad');}
+  document.getElementById('btn-next').classList.add('visible');
+  document.getElementById('btn-next').textContent=qIdx+1>=curSentences.length?'See results 🏆':'Next ➜';
+}
+
+function nextQuestion(){clearToast();qIdx++;if(qIdx>=curSentences.length)showLevelResult();else renderQuestion();}
+
+function showLevelResult(){
+  const total=curSentences.length,pct=scoreOk/total,pctPc=Math.round(pct*100),passed=pct>=THRESHOLD;
+  document.getElementById('q-card').style.display='none';
+  document.getElementById('mode-a').style.display='none';
+  document.getElementById('mode-b').style.display='none';
+  document.getElementById('btn-next').classList.remove('visible');
+  document.getElementById('pill-q').style.display='none';
+  document.getElementById('progress').style.width='100%';
+  let emoji,stars,title,sub;
+  if(pctPc===100){emoji='🏆';stars='★★★';title='Perfect!';}
+  else if(pctPc>=80){emoji='🎉';stars='★★☆';title='Great job!';}
+  else if(pctPc>=50){emoji='😊';stars='★☆☆';title='Good try!';}
+  else{emoji='💪';stars='☆☆☆';title='Keep going!';}
+  if(passed&&curLevel<3){unlocked[curLevel+1]=true;sub=`Level ${curLevel+1} unlocked! ✓`;}
+  else if(passed&&curLevel===3){showTrophy(pctPc);return;}
+  else{sub=`You need 80% to unlock the next level. (You got ${pctPc}%)`;}
+  document.getElementById('res-emoji').textContent=emoji;
+  document.getElementById('res-stars').textContent=stars;
+  document.getElementById('res-title').textContent=title;
+  document.getElementById('res-score').textContent=`${scoreOk} / ${total} correct (${pctPc}%)`;
+  document.getElementById('res-sub').textContent=sub;
+  const btnNL=document.getElementById('btn-next-lvl');
+  if(passed&&curLevel<3){btnNL.disabled=false;btnNL.textContent=`Level ${curLevel+1} ➜`;}
+  else{btnNL.disabled=true;btnNL.textContent='Locked 🔒';}
+  updateBadges();
+  document.getElementById('lvl-result').classList.add('show');
+}
+
+function showTrophy(pct){
+  document.getElementById('trophy-score').textContent=`You completed all 3 levels! Final score: ${scoreOk}/${curSentences.length} (${pct}%)`;
+  document.getElementById('trophy-screen').classList.add('show');
+  updateBadges();
+}
+
+let toastTimer;
+function showToast(msg,type,persist=false){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className=`toast ${type} show`;
+  clearTimeout(toastTimer);
+  if(!persist)toastTimer=setTimeout(()=>t.classList.remove('show'),1800);
+  t.dataset.persist=persist?'1':'0';
+}
+function clearToast(){const t=document.getElementById('toast');if(t.dataset.persist==='1')t.classList.remove('show');}
+
+startLevel(1);
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('/sw.js')
+      .then(r=>console.log('SW:',r.scope))
+      .catch(e=>console.warn('SW fail:',e));
+  });
+}
+</script>
 </body>
 </html>
