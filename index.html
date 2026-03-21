@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>🐱 Feelings Game</title>
+<meta name="description" content="A fun English feelings vocabulary game for primary school students.">
+<meta name="theme-color" content="#e0789f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Feelings Game">
+<link rel="manifest" href="manifest.webmanifest">
 <style>
 :root {
   --pink:  #e0789f;
@@ -1496,6 +1503,15 @@ function clearToast() {
 
 // ── START ─────────────────────────────────────────────────────────────────
 startLevel(1);
+
+// ── SERVICE WORKER REGISTRATION ───────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SW registered:', reg.scope))
+      .catch(err => console.warn('SW registration failed:', err));
+  });
+}
 </script>
 </body>
 </html>

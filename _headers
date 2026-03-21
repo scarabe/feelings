@@ -1,0 +1,27 @@
+# _headers – Cloudflare Pages
+# Règles d'en-têtes HTTP pour le projet Feelings Game
+
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+# Cache long pour le SW lui-même : NO-STORE (il doit toujours être rafraîchi)
+/sw.js
+  Cache-Control: no-store, no-cache, must-revalidate
+
+# Cache long pour les assets statiques immuables (icônes, manifest)
+/manifest.webmanifest
+  Content-Type: application/manifest+json
+  Cache-Control: public, max-age=86400
+
+/icon-192.png
+  Cache-Control: public, max-age=2592000
+
+/icon-512.png
+  Cache-Control: public, max-age=2592000
+
+# index.html : revalidation systématique pour toujours livrer la dernière version
+/index.html
+  Cache-Control: no-cache
