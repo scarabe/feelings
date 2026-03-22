@@ -1,7 +1,7 @@
 // sw.js – Service Worker for Feelings Game
 // Strategy: Cache First pour les assets statiques, Network First pour le reste.
 
-const CACHE_NAME = 'feelings-game-v2';
+const CACHE_NAME = 'feelings-game-v3';
 
 // Tous les fichiers à mettre en cache à l'installation
 const PRECACHE_URLS = [
