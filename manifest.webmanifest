@@ -1,12 +1,12 @@
 {
-  "name": "Feelings Game – Year 1",
-  "short_name": "Feelings",
+  "name": "feelings.Scarabe",
+  "short_name": "feelings",
   "description": "A fun English feelings vocabulary game for primary school students.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#fff8fc",
-  "theme_color": "#e0789f",
+  "background_color": "#f5ede0",
+  "theme_color": "#d4820a",
   "lang": "en",
   "icons": [
     {
